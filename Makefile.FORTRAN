@@ -1,0 +1,276 @@
+# erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
+# modifiziert Donnerstag, 16. April 2026 07:05 von Leander Jedamus
+# modifiziert Mittwoch, 15. April 2026 19:42 von Leander Jedamus
+# modifiziert Samstag, 09. September 2023 09:31 von Leander Jedamus
+# modifiziert Mittwoch, 02. September 2015 14:31 von Leander Jedamus
+# modifiziert Dienstag, 01. September 2015 18:11 von Leander Jedamus
+# modifiziert Samstag, 15. August 2015 12:35 von Leander Jedamus
+# modifiziert Mittwoch, 29. Juli 2015 13:28 von Leander Jedamus
+# modifiziert Freitag, 17. Juli 2015 20:37 von Leander Jedamus
+# modifiziert Dienstag, 14. Juli 2015 17:19 von Leander Jedamus
+# modifiziert Mittwoch, 08. Juli 2015 15:20 von Leander Jedamus
+# modifiziert Samstag, 04. Juli 2015 14:11 von Leander Jedamus
+
+ifeq ($(PLATFORM), windows)
+  FC		:= x86_64-w64-mingw32-gfortran
+  AR		:= x86_64-w64-mingw32-ar
+  EXT		:= .exe
+  RM		:= rm -f
+  MKDIR		:= mkdir -p
+  FIND		:= find
+else ifeq ($(PLATFORM),macos)
+  FC		:= mpifort
+  AR		:= ar
+  EXT		:= 
+  RM		:= rm -f
+  MKDIR		:= mkdir -p
+  FIND		:= find
+else
+  FC		:= gfortran
+  AR		:= ar
+  EXT		:= 
+  RM		:= rm -f
+  MKDIR		:= mkdir -p
+  FIND		:= find
+endif
+
+RANLIB		:= ranlibb
+LD		:= ld
+AS		:= as
+
+COMPILE.f	= $(FC) $(strip $(FFLAGS) $(MODFLAG) $(FINCLUDES) $(TARGET_ARCH)) -c
+COMPILE.F	= $(FC) -cpp $(strip $(FFLAGS) $(MODFLAG) $(FINCLUDES) $(TARGET_ARCH)) -c
+DEPEND.f	= $(FC) -M $(strip $(FINCLUDES))
+DEPEND.F	= $(FC) -cpp -M $(strip $(FINCLUDES))
+
+define compile.f
+$(RM) $@
+$(COMPILE.f) $< -o $@
+endef
+
+define compile.F
+$(RM) $@
+$(COMPILE.F) $< -o $@
+endef
+
+define depend.f
+$(RM) $@
+$(DEPEND.f) $< > $@
+endef
+
+define depend.F
+$(RM) $@
+$(DEPEND.F) $< > $@
+endef
+
+# .o object files
+
+%.o:		%.f
+		$(compile.f)
+
+%.o:		%.F
+		$(compile.F)
+
+%.o:		%.for
+		$(compile.f)
+
+%.o:		%.FOR
+		$(compile.F)
+
+%.o:		%.ftn
+		$(compile.f)
+
+%.o:		%.FTN
+		$(compile.F)
+
+%.o:		%.FPP
+		$(compile.F)
+
+%.o:		%.f77
+		$(compile.f)
+
+%.o:		%.F77
+		$(compile.F)
+
+%.o:		%.f90
+		$(compile.f)
+
+%.o:		%.F90
+		$(compile.F)
+
+%.o:		%.f95
+		$(compile.f)
+
+%.o:		%.F95
+		$(compile.F)
+
+%.o:		%.f03
+		$(compile.f)
+
+%.o:		%.F03
+		$(compile.F)
+
+%.o:		%.f08
+		$(compile.f)
+
+%.o:		%.F08
+		$(compile.F)
+
+# .ol object files
+
+%.ol:		%.f
+		$(compile.f)
+
+%.ol:		%.F
+		$(compile.F)
+
+%.ol:		%.for
+		$(compile.f)
+
+%.ol:		%.FOR
+		$(compile.F)
+
+%.ol:		%.ftn
+		$(compile.f)
+
+%.ol:		%.FTN
+		$(compile.F)
+
+%.ol:		%.FPP
+		$(compile.F)
+
+%.ol:		%.f77
+		$(compile.f)
+
+%.ol:		%.F77
+		$(compile.F)
+
+%.ol:		%.f90
+		$(compile.f)
+
+%.ol:		%.F90
+		$(compile.F)
+
+%.ol:		%.f95
+		$(compile.f)
+
+%.ol:		%.F95
+		$(compile.F)
+
+%.ol:		%.f03
+		$(compile.f)
+
+%.ol:		%.F03
+		$(compile.F)
+
+%.ol:		%.f08
+		$(compile.f)
+
+%.ol:		%.F08
+		$(compile.F)
+
+# .osl object files
+
+%.osl:		%.f
+		$(compile.f)
+
+%.osl:		%.F
+		$(compile.F)
+
+%.osl:		%.for
+		$(compile.f)
+
+%.osl:		%.FOR
+		$(compile.F)
+
+%.osl:		%.ftn
+		$(compile.f)
+
+%.osl:		%.FTN
+		$(compile.F)
+
+%.osl:		%.FPP
+		$(compile.F)
+
+%.osl:		%.f77
+		$(compile.f)
+
+%.osl:		%.F77
+		$(compile.F)
+
+%.osl:		%.f90
+		$(compile.f)
+
+%.osl:		%.F90
+		$(compile.F)
+
+%.osl:		%.f95
+		$(compile.f)
+
+%.osl:		%.F95
+		$(compile.F)
+
+%.osl:		%.f03
+		$(compile.f)
+
+%.osl:		%.F03
+		$(compile.F)
+
+%.osl:		%.f08
+		$(compile.f)
+
+%.osl:		%.F08
+		$(compile.F)
+
+# dependencies
+
+%.d:		%.f
+		$(depend.f)
+
+%.d:		%.F
+		$(depend.F)
+
+%.d:		%.for
+		$(depend.f)
+
+%.d:		%.FOR
+		$(depend.F)
+
+%.d:		%.ftn
+		$(depend.f)
+
+%.d:		%.FTN
+		$(depend.F)
+
+%.d:		%.FPP
+		$(depend.F)
+
+%.d:		%.f77
+		$(depend.f)
+
+%.d:		%.f90
+		$(depend.f)
+
+%.d:		%.F90
+		$(depend.F)
+
+%.d:		%.f95
+		$(depend.f)
+
+%.d:		%.F95
+		$(depend.F)
+
+%.d:		%.f03
+		$(depend.f)
+
+%.d:		%.F03
+		$(depend.F)
+
+%.d:		%.f08
+		$(depend.f)
+
+%.d:		%.F08
+		$(depend.F)
+
+# vim:ai sw=2 noexpandtab
+
