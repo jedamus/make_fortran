@@ -1,5 +1,5 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
-# modifiziert Donnerstag, 16. April 2026 07:14 von Leander Jedamus
+# modifiziert Donnerstag, 16. April 2026 09:04 von Leander Jedamus
 # modifiziert Mittwoch, 15. April 2026 20:51 von Leander Jedamus
 # modifiziert Donnerstag, 07. November 2024 10:19 von Leander Jedamus
 # modifiziert Montag, 07. Oktober 2024 11:05 von Leander Jedamus
@@ -218,7 +218,7 @@ SRCLIB			= $(SRCDIR)/lib
 BUILDLIB		= $(BUILDDIR)/lib
 
 MODFLAG			= -J$(BUILDDIR)
-INCLUDES		= -I$(BUILDDIR) -I$(SRCDIR) $(addprefix -I,$(wildcard $(SRCLIB)/*))
+FINCLUDES		= -I$(BUILDDIR) -I$(SRCDIR) $(addprefix -I,$(wildcard $(SRCLIB)/*))
 LDFLAGS			+= -L$(BUILDLIB) $(pathsubst $(SRCLIB)/%,-l%,$(wildcard $(SRCLIB)/*))
 
 ALL_SOURCES		= $(shell $(FIND) $(SRCDIR) -type f \( -name "*.f" -o -name "*.F" \
@@ -226,6 +226,50 @@ ALL_SOURCES		= $(shell $(FIND) $(SRCDIR) -type f \( -name "*.f" -o -name "*.F" \
 			  -o -name "*.FPP" -o -name "*.f77" -o -name "*.F77" -o -name "*.f90" \
 			  -o -name "*.F90" -o -name "*.f95" -o -name "*.F95" -o -name "*.f03" \
 			  -o -name "*.F03" -o -name "*.f08" -o -name "*.F08" \) )
+
+MAIN_SOURCES		= $(filter-out $(SRCLIB)/%,$(ALL_SOURCES))
+LIB_SOURCES		= $(filter $(SRCLIB)/%,$(ALL_SOURCES))
+
+MAIN_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.o,$(filter %.f,$(MAIN_SOURCES))) \
+			  $(patsubst $(SRCDIR)/%.F,$(BUILDDIR)/%.o,$(filter %.F,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.for,$(BUILDDIR)/%.o,$(filter %.for,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.FOR,$(BUILDDIR)/%.o,$(filter %.FOR,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.ftn,$(BUILDDIR)/%.o,$(filter %.ftn,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.FTN,$(BUILDDIR)/%.o,$(filter %.FTN,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.FPP,$(BUILDDIR)/%.o,$(filter %.FPP,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f77,$(BUILDDIR)/%.o,$(filter %.f77,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F77,$(BUILDDIR)/%.o,$(filter %.F77,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f90,$(BUILDDIR)/%.o,$(filter %.f90,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F90,$(BUILDDIR)/%.o,$(filter %.F90,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f95,$(BUILDDIR)/%.o,$(filter %.f95,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F95,$(BUILDDIR)/%.o,$(filter %.F95,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f03,$(BUILDDIR)/%.o,$(filter %.f03,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F03,$(BUILDDIR)/%.o,$(filter %.F03,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f08,$(BUILDDIR)/%.o,$(filter %.f08,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F08,$(BUILDDIR)/%.o,$(filter %.F08,$(MAIN_SOURCES)))
+
+LIB_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.o,$(filter %.f,$(LIB_SOURCES))) \
+			  $(patsubst $(SRCDIR)/%.F,$(BUILDDIR)/%.o,$(filter %.F,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.for,$(BUILDDIR)/%.o,$(filter %.for,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.FOR,$(BUILDDIR)/%.o,$(filter %.FOR,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.ftn,$(BUILDDIR)/%.o,$(filter %.ftn,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.FTN,$(BUILDDIR)/%.o,$(filter %.FTN,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.FPP,$(BUILDDIR)/%.o,$(filter %.FPP,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f77,$(BUILDDIR)/%.o,$(filter %.f77,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F77,$(BUILDDIR)/%.o,$(filter %.F77,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f90,$(BUILDDIR)/%.o,$(filter %.f90,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F90,$(BUILDDIR)/%.o,$(filter %.F90,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f95,$(BUILDDIR)/%.o,$(filter %.f95,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F95,$(BUILDDIR)/%.o,$(filter %.F95,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f03,$(BUILDDIR)/%.o,$(filter %.f03,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F03,$(BUILDDIR)/%.o,$(filter %.F03,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f08,$(BUILDDIR)/%.o,$(filter %.f08,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F08,$(BUILDDIR)/%.o,$(filter %.F08,$(LIB_SOURCES)))
+
+DEPENDS			= $(MAIN_OBJECTS:.o=.d) $(LIB_OBJECTS:.o=.d)
+
+LIB_NAMES		= $(notdir $(wildcard $(SRCLIB)/*))
+LIB_ARCHIVES		= $(addprefix $(BUILDDIR)/lib,$(addsuffix .a,$(LIB_NAMES)))
 
 OBJS			:= # put your obj files here \
 			    (will be deleted by "make clean")
@@ -315,7 +359,7 @@ PROGRAM1		:= $(BUILDDIR)/darlehen$(EXT)
 PROGRAMS		:= $(PROJECT_FILES) $(strip $(PROGRAM1) $(PROGRAM2))
 
 .PHONY:			all
-all:			$(PROGRAMS)
+all:			createdirs $(PROGRAMS)
 			@echo done.
 
 .PHONY:			install
@@ -333,6 +377,11 @@ bin_dist:		$(PROJECT_FILES) $(PROGRAMS)
 strip:			$(PROGRAMS)
 			$(STRIP) $(PROGRAMS)
 
+.PHONY:			createdirs
+createdirs:
+			@$(MKDIR) $(BUILDDIR)
+			@cd $(SRCDIR) && $(FIND) . -type d ! -path . -exec $(MKDIR) ../$(BUILDDIR)/{} \;
+
 .PHONY:			debug
 debug:
 			@echo "$$""(CLEAN)=$(strip $(CLEAN))"
@@ -349,6 +398,13 @@ debug:
 			@echo "$$""(DATETIME)=$(strip $(DATETIME))"
 			@echo "$$""(LIB1OBJS)=$(strip $(LIB1OBJS))"
 			@echo "$$""(ALL_SOURCES)=$(strip $(ALL_SOURCES))"
+			@echo "$$""(MAIN_SOURCES)=$(strip $(MAIN_SOURCES))"
+			@echo "$$""(LIB_SOURCES)=$(strip $(LIB_SOURCES))"
+			@echo "$$""(MAIN_OBJECTS)=$(strip $(MAIN_OBJECTS))"
+			@echo "$$""(LIB_OBJECTS)=$(strip $(LIB_OBJECTS))"
+			@echo "$$""(DEPENDS)=$(strip $(DEPENDS))"
+			@echo "$$""(LIB_NAMES)=$(strip $(LIB_NAMES))"
+			@echo "$$""(LIB_ARCHIVES)=$(strip $(LIB_ARCHIVES))"
 
 .PHONY:			debugger
 debugger:		$(PROGRAM1)
