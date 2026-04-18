@@ -1,4 +1,5 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
+# modifiziert Samstag, 18. April 2026 05:08 von Leander Jedamus
 # modifiziert Donnerstag, 16. April 2026 07:05 von Leander Jedamus
 # modifiziert Mittwoch, 15. April 2026 19:42 von Leander Jedamus
 # modifiziert Samstag, 09. September 2023 09:31 von Leander Jedamus
@@ -10,6 +11,8 @@
 # modifiziert Dienstag, 14. Juli 2015 17:19 von Leander Jedamus
 # modifiziert Mittwoch, 08. Juli 2015 15:20 von Leander Jedamus
 # modifiziert Samstag, 04. Juli 2015 14:11 von Leander Jedamus
+
+$(echo "test $(SRCDIR)")
 
 ifeq ($(PLATFORM), windows)
   FC		:= x86_64-w64-mingw32-gfortran
@@ -45,232 +48,239 @@ DEPEND.F	= $(FC) -cpp -M $(strip $(FINCLUDES))
 
 define compile.f
 $(RM) $@
+@$(MKDIR) $(dir $@)
 $(COMPILE.f) $< -o $@
 endef
 
 define compile.F
 $(RM) $@
+@$(MKDIR) $(dir $@)
 $(COMPILE.F) $< -o $@
 endef
 
 define depend.f
 $(RM) $@
-$(DEPEND.f) $< > $@
+@$(MKDIR) $(dir $@)
+$(DEPEND.F) $< | sed 's|\(.*\)\.o[ :]*|$(dir $@)\1.o $@: | g' > $@
 endef
 
 define depend.F
 $(RM) $@
-$(DEPEND.F) $< > $@
+@$(MKDIR) $(dir $@)
+$(DEPEND.F) $< | sed 's#\(.*\)\.o[ :]*#$(dir $@)\1.o $@: # g' > $@
 endef
 
 # .o object files
 
-%.o:		%.f
-		$(compile.f)
+$(BUILDDIR)/%.o:    $(SRCDIR)/%.f
+		    $(compile.f)
 
-%.o:		%.F
-		$(compile.F)
+$(BUILDDIR)/%.o:    $(SRCDIR)/%.F
+		    $(compile.F)
 
-%.o:		%.for
-		$(compile.f)
+$(BUILDDIR)/%.o:    $(SRCDIR)/%.for
+		    $(compile.f)
 
-%.o:		%.FOR
-		$(compile.F)
+$(BUILDDIR)/%.o:    $(SRCDIR)/%.FOR
+		    $(compile.F)
 
-%.o:		%.ftn
-		$(compile.f)
+$(BUILDDIR)/%.o:    $(SRCDIR)/%.ftn
+		    $(compile.f)
 
-%.o:		%.FTN
-		$(compile.F)
+$(BUILDDIR)/%.o:    $(SRCDIR)/%.FTN
+		    $(compile.F)
 
-%.o:		%.FPP
-		$(compile.F)
+$(BUILDDIR)/%.o:    $(SRCDIR)/%.FPP
+		    $(compile.F)
 
-%.o:		%.f77
-		$(compile.f)
+$(BUILDDIR)/%.o:    $(SRCDIR)/%.f77
+		    $(compile.f)
 
-%.o:		%.F77
-		$(compile.F)
+$(BUILDDIR)/%.o:    $(SRCDIR)/%.F77
+		    $(compile.F)
 
-%.o:		%.f90
-		$(compile.f)
+$(BUILDDIR)/%.o:    $(SRCDIR)/%.f90
+		    $(compile.f)
 
-%.o:		%.F90
-		$(compile.F)
+$(BUILDDIR)/%.o:    $(SRCDIR)/%.F90
+		    $(compile.F)
 
-%.o:		%.f95
-		$(compile.f)
+$(BUILDDIR)/%.o:    $(SRCDIR)/%.f95
+		    $(compile.f)
 
-%.o:		%.F95
-		$(compile.F)
+$(BUILDDIR)/%.o:    $(SRCDIR)/%.F95
+		    $(compile.F)
 
-%.o:		%.f03
-		$(compile.f)
+$(BUILDDIR)/%.o:    $(SRCDIR)/%.f03
+		    $(compile.f)
 
-%.o:		%.F03
-		$(compile.F)
+$(BUILDDIR)/%.o:    $(SRCDIR)/%.F03
+		    $(compile.F)
 
-%.o:		%.f08
-		$(compile.f)
+$(BUILDDIR)/%.o:    $(SRCDIR)/%.f08
+		    $(compile.f)
 
-%.o:		%.F08
-		$(compile.F)
+$(BUILDDIR)/%.o:    $(SRCDIR)/%.F08
+		    $(compile.F)
 
 # .ol object files
 
-%.ol:		%.f
-		$(compile.f)
+$(BUILDDIR)/%.ol:   $(SRCDIR)/%.f
+		    $(compile.f)
 
-%.ol:		%.F
-		$(compile.F)
+$(BUILDDIR)/%.ol:   $(SRCDIR)/%.F
+		    $(compile.F)
 
-%.ol:		%.for
-		$(compile.f)
+$(BUILDDIR)/%.ol:   $(SRCDIR)/%.for
+		    $(compile.f)
 
-%.ol:		%.FOR
-		$(compile.F)
+$(BUILDDIR)/%.ol:   $(SRCDIR)/%.FOR
+		    $(compile.F)
 
-%.ol:		%.ftn
-		$(compile.f)
+$(BUILDDIR)/%.ol:   $(SRCDIR)/%.ftn
+		    $(compile.f)
 
-%.ol:		%.FTN
-		$(compile.F)
+$(BUILDDIR)/%.ol:   $(SRCDIR)/%.FTN
+		    $(compile.F)
 
-%.ol:		%.FPP
-		$(compile.F)
+$(BUILDDIR)/%.ol:   $(SRCDIR)/%.FPP
+		    $(compile.F)
 
-%.ol:		%.f77
-		$(compile.f)
+$(BUILDDIR)/%.ol:   $(SRCDIR)/%.f77
+		    $(compile.f)
 
-%.ol:		%.F77
-		$(compile.F)
+$(BUILDDIR)/%.ol:   $(SRCDIR)/%.F77
+		    $(compile.F)
 
-%.ol:		%.f90
-		$(compile.f)
+$(BUILDDIR)/%.ol:   $(SRCDIR)/%.f90
+		    $(compile.f)
 
-%.ol:		%.F90
-		$(compile.F)
+$(BUILDDIR)/%.ol:   $(SRCDIR)/%.F90
+		    $(compile.F)
 
-%.ol:		%.f95
-		$(compile.f)
+$(BUILDDIR)/%.ol:   $(SRCDIR)/%.f95
+		    $(compile.f)
 
-%.ol:		%.F95
-		$(compile.F)
+$(BUILDDIR)/%.ol:   $(SRCDIR)/%.F95
+		    $(compile.F)
 
-%.ol:		%.f03
-		$(compile.f)
+$(BUILDDIR)/%.ol:   $(SRCDIR)/%.f03
+		    $(compile.f)
 
-%.ol:		%.F03
-		$(compile.F)
+$(BUILDDIR)/%.ol:   $(SRCDIR)/%.F03
+		    $(compile.F)
 
-%.ol:		%.f08
-		$(compile.f)
+$(BUILDDIR)/%.ol:   $(SRCDIR)/%.f08
+		    $(compile.f)
 
-%.ol:		%.F08
-		$(compile.F)
+$(BUILDDIR)/%.ol:   $(SRCDIR)/%.F08
+		    $(compile.F)
 
 # .osl object files
 
-%.osl:		%.f
-		$(compile.f)
+$(BUILDDIR)/%.osl:  $(SRCDIR)/%.f
+		    $(compile.f)
 
-%.osl:		%.F
-		$(compile.F)
+$(BUILDDIR)/%.osl:  $(SRCDIR)/%.F
+		    $(compile.F)
 
-%.osl:		%.for
-		$(compile.f)
+$(BUILDDIR)/%.osl:  $(SRCDIR)/%.for
+		    $(compile.f)
 
-%.osl:		%.FOR
-		$(compile.F)
+$(BUILDDIR)/%.osl:  $(SRCDIR)/%.FOR
+		    $(compile.F)
 
-%.osl:		%.ftn
-		$(compile.f)
+$(BUILDDIR)/%.osl:  $(SRCDIR)/%.ftn
+		    $(compile.f)
 
-%.osl:		%.FTN
-		$(compile.F)
+$(BUILDDIR)/%.osl:  $(SRCDIR)/%.FTN
+		    $(compile.F)
 
-%.osl:		%.FPP
-		$(compile.F)
+$(BUILDDIR)/%.osl:  $(SRCDIR)/%.FPP
+		    $(compile.F)
 
-%.osl:		%.f77
-		$(compile.f)
+$(BUILDDIR)/%.osl:  $(SRCDIR)/%.f77
+		    $(compile.f)
 
-%.osl:		%.F77
-		$(compile.F)
+$(BUILDDIR)/%.osl:  $(SRCDIR)/%.F77
+		    $(compile.F)
 
-%.osl:		%.f90
-		$(compile.f)
+$(BUILDDIR)/%.osl:  $(SRCDIR)/%.f90
+		    $(compile.f)
 
-%.osl:		%.F90
-		$(compile.F)
+$(BUILDDIR)/%.osl:  $(SRCDIR)/%.F90
+		    $(compile.F)
 
-%.osl:		%.f95
-		$(compile.f)
+$(BUILDDIR)/%.osl:  $(SRCDIR)/%.f95
+		    $(compile.f)
 
-%.osl:		%.F95
-		$(compile.F)
+$(BUILDDIR)/%.osl:  $(SRCDIR)/%.F95
+		    $(compile.F)
 
-%.osl:		%.f03
-		$(compile.f)
+$(BUILDDIR)/%.osl:  $(SRCDIR)/%.f03
+		    $(compile.f)
 
-%.osl:		%.F03
-		$(compile.F)
+$(BUILDDIR)/%.osl:  $(SRCDIR)/%.F03
+		    $(compile.F)
 
-%.osl:		%.f08
-		$(compile.f)
+$(BUILDDIR)/%.osl:  $(SRCDIR)/%.f08
+		    $(compile.f)
 
-%.osl:		%.F08
-		$(compile.F)
+$(BUILDDIR)/%.osl:  $(SRCDIR)/%.F08
+		    $(compile.F)
 
 # dependencies
 
-%.d:		%.f
-		$(depend.f)
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.f
+		    $(depend.f)
 
-%.d:		%.F
-		$(depend.F)
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.F
+		    $(depend.F)
 
-%.d:		%.for
-		$(depend.f)
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.for
+		    $(depend.f)
 
-%.d:		%.FOR
-		$(depend.F)
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.FOR
+		    $(depend.F)
 
-%.d:		%.ftn
-		$(depend.f)
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.ftn
+		    $(depend.f)
 
-%.d:		%.FTN
-		$(depend.F)
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.FTN
+		    $(depend.F)
 
-%.d:		%.FPP
-		$(depend.F)
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.FPP
+		    $(depend.F)
 
-%.d:		%.f77
-		$(depend.f)
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.f77
+		    $(depend.f)
 
-%.d:		%.f90
-		$(depend.f)
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.F77
+		    $(depend.F)
 
-%.d:		%.F90
-		$(depend.F)
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.f90
+		    $(depend.f)
 
-%.d:		%.f95
-		$(depend.f)
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.F90
+		    $(depend.F)
 
-%.d:		%.F95
-		$(depend.F)
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.f95
+		    $(depend.f)
 
-%.d:		%.f03
-		$(depend.f)
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.F95
+		    $(depend.F)
 
-%.d:		%.F03
-		$(depend.F)
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.f03
+		    $(depend.f)
 
-%.d:		%.f08
-		$(depend.f)
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.F03
+		    $(depend.F)
 
-%.d:		%.F08
-		$(depend.F)
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.f08
+		    $(depend.f)
+
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.F08
+		    $(depend.F)
 
 # vim:ai sw=2 noexpandtab
 
