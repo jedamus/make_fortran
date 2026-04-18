@@ -1,4 +1,5 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
+# modifiziert Samstag, 18. April 2026 05:08 von Leander Jedamus
 # modifiziert Donnerstag, 16. April 2026 09:04 von Leander Jedamus
 # modifiziert Mittwoch, 15. April 2026 20:51 von Leander Jedamus
 # modifiziert Donnerstag, 07. November 2024 10:19 von Leander Jedamus
@@ -124,7 +125,6 @@ STRIP			:= strip
 #include Makefile.cweb_and_noweb
 #include Makefile.documentation
 #include Makefile.flex_and_bison
-include Makefile.FORTRAN
 #include Makefile.latex
 #include Makefile.modula2
 #include Makefile.pascal
@@ -212,65 +212,6 @@ define print
 $(PRINT) $<
 endef
 
-SRCDIR			= test_src
-BUILDDIR		= build/$(PLATFORM)
-SRCLIB			= $(SRCDIR)/lib
-BUILDLIB		= $(BUILDDIR)/lib
-
-MODFLAG			= -J$(BUILDDIR)
-FINCLUDES		= -I$(BUILDDIR) -I$(SRCDIR) $(addprefix -I,$(wildcard $(SRCLIB)/*))
-LDFLAGS			+= -L$(BUILDLIB) $(pathsubst $(SRCLIB)/%,-l%,$(wildcard $(SRCLIB)/*))
-
-ALL_SOURCES		= $(shell $(FIND) $(SRCDIR) -type f \( -name "*.f" -o -name "*.F" \
-			  -o -name "*.for" -o -name "*.FOR" -o -name "*.ftn" -o -name "*.FTN" \
-			  -o -name "*.FPP" -o -name "*.f77" -o -name "*.F77" -o -name "*.f90" \
-			  -o -name "*.F90" -o -name "*.f95" -o -name "*.F95" -o -name "*.f03" \
-			  -o -name "*.F03" -o -name "*.f08" -o -name "*.F08" \) )
-
-MAIN_SOURCES		= $(filter-out $(SRCLIB)/%,$(ALL_SOURCES))
-LIB_SOURCES		= $(filter $(SRCLIB)/%,$(ALL_SOURCES))
-
-MAIN_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.o,$(filter %.f,$(MAIN_SOURCES))) \
-			  $(patsubst $(SRCDIR)/%.F,$(BUILDDIR)/%.o,$(filter %.F,$(MAIN_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.for,$(BUILDDIR)/%.o,$(filter %.for,$(MAIN_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.FOR,$(BUILDDIR)/%.o,$(filter %.FOR,$(MAIN_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.ftn,$(BUILDDIR)/%.o,$(filter %.ftn,$(MAIN_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.FTN,$(BUILDDIR)/%.o,$(filter %.FTN,$(MAIN_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.FPP,$(BUILDDIR)/%.o,$(filter %.FPP,$(MAIN_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.f77,$(BUILDDIR)/%.o,$(filter %.f77,$(MAIN_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.F77,$(BUILDDIR)/%.o,$(filter %.F77,$(MAIN_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.f90,$(BUILDDIR)/%.o,$(filter %.f90,$(MAIN_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.F90,$(BUILDDIR)/%.o,$(filter %.F90,$(MAIN_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.f95,$(BUILDDIR)/%.o,$(filter %.f95,$(MAIN_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.F95,$(BUILDDIR)/%.o,$(filter %.F95,$(MAIN_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.f03,$(BUILDDIR)/%.o,$(filter %.f03,$(MAIN_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.F03,$(BUILDDIR)/%.o,$(filter %.F03,$(MAIN_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.f08,$(BUILDDIR)/%.o,$(filter %.f08,$(MAIN_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.F08,$(BUILDDIR)/%.o,$(filter %.F08,$(MAIN_SOURCES)))
-
-LIB_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.o,$(filter %.f,$(LIB_SOURCES))) \
-			  $(patsubst $(SRCDIR)/%.F,$(BUILDDIR)/%.o,$(filter %.F,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.for,$(BUILDDIR)/%.o,$(filter %.for,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.FOR,$(BUILDDIR)/%.o,$(filter %.FOR,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.ftn,$(BUILDDIR)/%.o,$(filter %.ftn,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.FTN,$(BUILDDIR)/%.o,$(filter %.FTN,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.FPP,$(BUILDDIR)/%.o,$(filter %.FPP,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.f77,$(BUILDDIR)/%.o,$(filter %.f77,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.F77,$(BUILDDIR)/%.o,$(filter %.F77,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.f90,$(BUILDDIR)/%.o,$(filter %.f90,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.F90,$(BUILDDIR)/%.o,$(filter %.F90,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.f95,$(BUILDDIR)/%.o,$(filter %.f95,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.F95,$(BUILDDIR)/%.o,$(filter %.F95,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.f03,$(BUILDDIR)/%.o,$(filter %.f03,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.F03,$(BUILDDIR)/%.o,$(filter %.F03,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.f08,$(BUILDDIR)/%.o,$(filter %.f08,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.F08,$(BUILDDIR)/%.o,$(filter %.F08,$(LIB_SOURCES)))
-
-DEPENDS			= $(MAIN_OBJECTS:.o=.d) $(LIB_OBJECTS:.o=.d)
-
-LIB_NAMES		= $(notdir $(wildcard $(SRCLIB)/*))
-LIB_ARCHIVES		= $(addprefix $(BUILDDIR)/lib,$(addsuffix .a,$(LIB_NAMES)))
-
 OBJS			:= # put your obj files here \
 			    (will be deleted by "make clean")
 LIBRARIES		:= # put your libraries here \
@@ -342,7 +283,64 @@ FILES			+= license.md
 			   $(CCOBJS.cxx) $(CCOBJS.C)
 #OBJS			+= $(CCOBJS)
 
-##+## hier
+SRCDIR			= test_src
+BUILDDIR		= build/$(PLATFORM)
+SRCLIB			= $(SRCDIR)/lib
+BUILDLIB		= $(BUILDDIR)/lib
+
+MODFLAG			= -J$(BUILDDIR)
+FINCLUDES		= -I$(BUILDDIR) -I$(SRCDIR) $(addprefix -I,$(wildcard $(SRCLIB)/*))
+LDFLAGS			+= -L$(BUILDLIB) $(patsubst $(SRCLIB)/%,-l%,$(wildcard $(SRCLIB)/*))
+
+ALL_SOURCES		= $(shell $(FIND) $(SRCDIR) -type f \( -name "*.f" -o -name "*.F" \
+			  -o -name "*.for" -o -name "*.FOR" -o -name "*.ftn" -o -name "*.FTN" \
+			  -o -name "*.FPP" -o -name "*.f77" -o -name "*.F77" -o -name "*.f90" \
+			  -o -name "*.F90" -o -name "*.f95" -o -name "*.F95" -o -name "*.f03" \
+			  -o -name "*.F03" -o -name "*.f08" -o -name "*.F08" \) )
+
+MAIN_SOURCES		= $(filter-out $(SRCLIB)/%,$(ALL_SOURCES))
+LIB_SOURCES		= $(filter $(SRCLIB)/%,$(ALL_SOURCES))
+
+MAIN_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.o,$(filter %.f,$(MAIN_SOURCES))) \
+			  $(patsubst $(SRCDIR)/%.F,$(BUILDDIR)/%.o,$(filter %.F,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.for,$(BUILDDIR)/%.o,$(filter %.for,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.FOR,$(BUILDDIR)/%.o,$(filter %.FOR,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.ftn,$(BUILDDIR)/%.o,$(filter %.ftn,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.FTN,$(BUILDDIR)/%.o,$(filter %.FTN,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.FPP,$(BUILDDIR)/%.o,$(filter %.FPP,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f77,$(BUILDDIR)/%.o,$(filter %.f77,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F77,$(BUILDDIR)/%.o,$(filter %.F77,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f90,$(BUILDDIR)/%.o,$(filter %.f90,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F90,$(BUILDDIR)/%.o,$(filter %.F90,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f95,$(BUILDDIR)/%.o,$(filter %.f95,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F95,$(BUILDDIR)/%.o,$(filter %.F95,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f03,$(BUILDDIR)/%.o,$(filter %.f03,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F03,$(BUILDDIR)/%.o,$(filter %.F03,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f08,$(BUILDDIR)/%.o,$(filter %.f08,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F08,$(BUILDDIR)/%.o,$(filter %.F08,$(MAIN_SOURCES)))
+
+LIB_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.o,$(filter %.f,$(LIB_SOURCES))) \
+			  $(patsubst $(SRCDIR)/%.F,$(BUILDDIR)/%.o,$(filter %.F,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.for,$(BUILDDIR)/%.o,$(filter %.for,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.FOR,$(BUILDDIR)/%.o,$(filter %.FOR,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.ftn,$(BUILDDIR)/%.o,$(filter %.ftn,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.FTN,$(BUILDDIR)/%.o,$(filter %.FTN,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.FPP,$(BUILDDIR)/%.o,$(filter %.FPP,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f77,$(BUILDDIR)/%.o,$(filter %.f77,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F77,$(BUILDDIR)/%.o,$(filter %.F77,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f90,$(BUILDDIR)/%.o,$(filter %.f90,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F90,$(BUILDDIR)/%.o,$(filter %.F90,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f95,$(BUILDDIR)/%.o,$(filter %.f95,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F95,$(BUILDDIR)/%.o,$(filter %.F95,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f03,$(BUILDDIR)/%.o,$(filter %.f03,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F03,$(BUILDDIR)/%.o,$(filter %.F03,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f08,$(BUILDDIR)/%.o,$(filter %.f08,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F08,$(BUILDDIR)/%.o,$(filter %.F08,$(LIB_SOURCES)))
+
+DEPENDS			= $(MAIN_OBJECTS:.o=.d) $(LIB_OBJECTS:.o=.d)
+
+LIB_NAMES		= $(notdir $(wildcard $(SRCLIB)/*))
+LIB_ARCHIVES		= $(foreach lib,$(LIB_NAMES), $(addprefix $(BUILDLIB)/lib,$(addsuffix .a,$(lib))))
 
 CLEAN			= $(strip $(filter %.o,$(OBJS)) \
 		            $(filter %.osl,$(OBJS)) \
@@ -354,13 +352,26 @@ CLEAN			= $(strip $(filter %.o,$(OBJS)) \
 CLEANDIRS		= $(strip $(HTMLDIR) $(CPPCHECKDIR))
 
 PROGRAM1		:= $(BUILDDIR)/darlehen$(EXT)
+
 #PROGRAM2		:= $(PROJECT)
 
 PROGRAMS		:= $(PROJECT_FILES) $(strip $(PROGRAM1) $(PROGRAM2))
 
+include Makefile.FORTRAN
+
 .PHONY:			all
 all:			createdirs $(PROGRAMS)
 			@echo done.
+
+$(PROGRAM1):		$(DEPENDS) $(MAIN_OBJECTS) $(LIB_OBJECTS) $(LIB_ARCHIVES)
+			$(FC) $(strip $(FFLAGS) $(FINCLUDES) -o $@ $(MAIN_OBJECTS) $(LDFLAGS))
+
+define create-lib-rule
+$$(BUILDLIB)/lib$(1).a: $$(wildcard $$(BUILDLIB)/$(1)/*.o)
+	$$(AR) rcs $$@ $$^
+endef
+
+$(foreach lib,$(LIB_NAMES),$(eval $(call create-lib-rule,$(lib))))
 
 .PHONY:			install
 install:		$(PROJECT_FILES) $(PROGRAMS)
@@ -405,6 +416,13 @@ debug:
 			@echo "$$""(DEPENDS)=$(strip $(DEPENDS))"
 			@echo "$$""(LIB_NAMES)=$(strip $(LIB_NAMES))"
 			@echo "$$""(LIB_ARCHIVES)=$(strip $(LIB_ARCHIVES))"
+			@echo "$$""(SRCDIR)=$(strip $(SRCDIR))"
+			@echo "$$""(SRCLIB)=$(strip $(SRCLIB))"
+			@echo "$$""(BUILDDIR)=$(strip $(BUILDDIR))"
+			@echo "$$""(BUILDLIB)=$(strip $(BUILDLIB))"
+			@echo "$$""(FFLAGS)=$(strip $(FFLAGS))"
+			@echo "$$""(FINCLUDES)=$(strip $(FINCLUDES))"
+			@echo "$$""(LDFLAGS)=$(strip $(LDFLAGS))"
 
 .PHONY:			debugger
 debugger:		$(PROGRAM1)
@@ -425,22 +443,26 @@ doc:			$(INFOFILE) $(XMLFILE) $(TXTFILE) \
 			$(HTMLFILE)
 			# $(PDFFILE) 
 
-$(PROGRAM1):		$(LIB1RARY) $(CDEPENDS) $(MAINOBJS)
-			$(link.c)
+#$(PROGRAM1):		$(LIB1RARY) $(CDEPENDS) $(MAINOBJS)
+#			$(link.c)
 
 #$(PROJECT):			$(CCOBJS)
 #			$(link.cc)
 
-$(LIB1RARY):		$(LIB1OBJS)
-			$(static_library)
+#$(LIB1RARY):		$(LIB1OBJS)
+#			$(static_library)
+
+#.PHONY:			clean
+#clean:
+#			$(RM) $(CLEAN)
+#			$(RM) -r $(CLEANDIRS)
+#ifeq ($(machtype),MacOS)
+#			$(RM) -r $(PROJECT).dSYM
+#endif
 
 .PHONY:			clean
 clean:
-			$(RM) $(CLEAN)
-			$(RM) -r $(CLEANDIRS)
-ifeq ($(machtype),MacOS)
-			$(RM) -r $(PROJECT).dSYM
-endif
+			$(RM) -r $(BUILDDIR)
 
 .PHONY:			distclean
 distclean:
@@ -508,12 +530,14 @@ translate:
 #  include $(DEPENDFILE)
 #endif
 
+-include $(DEPENDS)
+
 #
 # include dependency files if exists
 #
-ifneq (,$(wildcard *.d))
-  include *.d
-endif
+#ifneq (,$(wildcard *.d))
+#  include *.d
+#endif
 
 # vim:ai sw=2 noexpandtab
 
