@@ -1,5 +1,5 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
-# modifiziert Samstag, 18. April 2026 05:08 von Leander Jedamus
+# modifiziert Samstag, 18. April 2026 09:41 von Leander Jedamus
 # modifiziert Donnerstag, 16. April 2026 09:04 von Leander Jedamus
 # modifiziert Mittwoch, 15. April 2026 20:51 von Leander Jedamus
 # modifiziert Donnerstag, 07. November 2024 10:19 von Leander Jedamus
@@ -283,10 +283,34 @@ FILES			+= license.md
 			   $(CCOBJS.cxx) $(CCOBJS.C)
 #OBJS			+= $(CCOBJS)
 
-SRCDIR			= test_src
-BUILDDIR		= build/$(PLATFORM)
-SRCLIB			= $(SRCDIR)/lib
-BUILDLIB		= $(BUILDDIR)/lib
+UNAME_S			= $(shell uname -s)
+UNAME_M			= $(shell uname -m)
+
+ifeq ($(UNAME_S),Linux)
+  PLATFORM_DEFINES += -D__linux__ -D__gnu_linux__ -D__unix__
+else ifeq ($(UNAME_S),Darwin)
+  PLATFORM_DEFINES += -D__APPLE__ -D__MACH__
+else ifneq ($(findstr MINGW,$(UNAME_s)),)
+  PLATFORM_DEFINES += -D_WIN32
+else ifneq ($(findstr CYGWIN,$(UNAME_S)),)
+  PLATFORM_DEFINES += -D_WIN32 -D__CYGWIN__
+endif
+
+ifeq ($(UNAME_M),x86_64)
+  ARCH_DEFINES		+= -D__x86_64__
+else ifeq ($(UNAME_M),i686)
+  ARCH_DEFINES		+= -D__i386__
+else ifeq ($(UNAME_M),aarch64)
+  ARCH_DEFINES		+= -D__aarch64__
+endif
+
+DEFINES			= $(PLATFORM_DEFINES) $(ARCH_DEFINES)
+FFLAGS	    		+= $(DEFINES)
+
+SRCDIR			= ./src
+BUILDDIR		= ./build/$(PLATFORM)
+SRCLIB			= ./$(SRCDIR)/lib
+BUILDLIB		= ./$(BUILDDIR)/lib
 
 MODFLAG			= -J$(BUILDDIR)
 FINCLUDES		= -I$(BUILDDIR) -I$(SRCDIR) $(addprefix -I,$(wildcard $(SRCLIB)/*))
@@ -496,7 +520,8 @@ create_project:		project.h version.h
 .PHONY:			update_version
 update_version:		version.h
 
-#.PHONY:			depend
+.PHONY:			depend
+depend:			$(DEPENDS)
 #depend:
 #			echo "# automatically created" \
 #			     "$(DATETIME)" \
