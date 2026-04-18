@@ -1,5 +1,5 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
-# modifiziert Samstag, 18. April 2026 05:08 von Leander Jedamus
+# modifiziert Samstag, 18. April 2026 10:02 von Leander Jedamus
 # modifiziert Donnerstag, 16. April 2026 07:05 von Leander Jedamus
 # modifiziert Mittwoch, 15. April 2026 19:42 von Leander Jedamus
 # modifiziert Samstag, 09. September 2023 09:31 von Leander Jedamus
@@ -37,14 +37,16 @@ else
   FIND		:= find
 endif
 
-RANLIB		:= ranlibb
+RANLIB		:= ranlib
 LD		:= ld
 AS		:= as
 
 COMPILE.f	= $(FC) $(strip $(FFLAGS) $(MODFLAG) $(FINCLUDES) $(TARGET_ARCH)) -c
 COMPILE.F	= $(FC) -cpp $(strip $(FFLAGS) $(MODFLAG) $(FINCLUDES) $(TARGET_ARCH)) -c
-DEPEND.f	= $(FC) -M $(strip $(FINCLUDES))
-DEPEND.F	= $(FC) -cpp -M $(strip $(FINCLUDES))
+DEPEND.f	= $(FC) -M $(strip $(DEFINES) $(MODFLAG))
+#DEPEND.f	= $(FC) -M $(strip $(DEFINES) $(MODFLAG) $(FINCLUDES))
+DEPEND.F	= $(FC) -cpp -M $(strip $(DEFINES) $(MODFLAG))
+#DEPEND.F	= $(FC) -cpp -M $(strip $(DEFINES) $(MODFLAG) $(FINCLUDES))
 
 define compile.f
 $(RM) $@
@@ -61,13 +63,13 @@ endef
 define depend.f
 $(RM) $@
 @$(MKDIR) $(dir $@)
-$(DEPEND.F) $< | sed 's|\(.*\)\.o[ :]*|$(dir $@)\1.o $@: | g' > $@
+$(DEPEND.F) $< | sed 's|\(.*\)\.o\([ :]*\)|$(dir $@)\1.o $@ \2 | g' > $@
 endef
 
 define depend.F
 $(RM) $@
 @$(MKDIR) $(dir $@)
-$(DEPEND.F) $< | sed 's#\(.*\)\.o[ :]*#$(dir $@)\1.o $@: # g' > $@
+$(DEPEND.F) $< | sed 's#\(.*\)\.o\([ :]*\)#$(dir $@)\1.o $@ \2 # g' > $@
 endef
 
 # .o object files
