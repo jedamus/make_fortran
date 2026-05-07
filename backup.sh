@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 
 # erzeugt Mittwoch, 16. August 2023 12:49 (C) 2023 von Leander Jedamus
+# modifiziert Samstag, 18. April 2026 05:14 von Leander Jedamus
 # modifiziert Donnerstag, 16. April 2026 06:05 von Leander Jedamus
 # modifiziert Freitag, 04. Oktober 2024 18:48 von Leander Jedamus
 # modifiziert Samstag, 24. August 2024 08:47 von Leander Jedamus
@@ -24,6 +25,7 @@ locale=locale
 svn=.svn
 git=.git
 src=src
+test_src=test_src
 BACKUPDIR=$1
 TARFILE=$2
 backup=$(mktemp -d)
@@ -51,7 +53,7 @@ if [ -d $locale ]; then
   fi
 fi
 
-dirs="$src $svn $git"
+dirs="$src $test_src $svn $git"
 
 for dir in $dirs; do
   if [ -d $dir ]; then
