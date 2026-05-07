@@ -1,5 +1,5 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
-# modifiziert Donnerstag, 07. Mai 2026 10:43 von Leander Jedamus
+# modifiziert Donnerstag, 07. Mai 2026 11:55 von Leander Jedamus
 # modifiziert Mittwoch, 06. Mai 2026 18:49 von Leander Jedamus
 # modifiziert Samstag, 18. April 2026 13:51 von Leander Jedamus
 # modifiziert Donnerstag, 16. April 2026 09:04 von Leander Jedamus
@@ -347,6 +347,7 @@ MAIN_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.o,$(filter %.f,$(MAIN_SOU
 			  $(patsubst $(SRCDIR)/%.F03,$(BUILDDIR)/%.o,$(filter %.F03,$(MAIN_SOURCES)))  \
 			  $(patsubst $(SRCDIR)/%.f08,$(BUILDDIR)/%.o,$(filter %.f08,$(MAIN_SOURCES)))  \
 			  $(patsubst $(SRCDIR)/%.F08,$(BUILDDIR)/%.o,$(filter %.F08,$(MAIN_SOURCES)))
+
 ifeq  ($(link_switch),static)
 LIB_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.ol,$(filter %.f,$(LIB_SOURCES))) \
 			  $(patsubst $(SRCDIR)/%.F,$(BUILDDIR)/%.ol,$(filter %.F,$(LIB_SOURCES)))  \
@@ -386,7 +387,6 @@ LIB_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.osl,$(filter %.f,$(LIB_SOU
 			  $(patsubst $(SRCDIR)/%.F08,$(BUILDDIR)/%.osl,$(filter %.F08,$(LIB_SOURCES)))
 DEPENDS			= $(MAIN_OBJECTS:.o=.d) $(LIB_OBJECTS:.osl=.d)
 endif
-
 
 LIB_NAMES		= $(notdir $(wildcard $(SRCLIB)/*))
 ifeq ($(link_switch),static)
