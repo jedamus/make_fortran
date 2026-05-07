@@ -1,5 +1,5 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
-# modifiziert Donnerstag, 07. Mai 2026 14:34 von Leander Jedamus
+# modifiziert Donnerstag, 07. Mai 2026 14:54 von Leander Jedamus
 # modifiziert Mittwoch, 06. Mai 2026 18:49 von Leander Jedamus
 # modifiziert Samstag, 18. April 2026 13:51 von Leander Jedamus
 # modifiziert Donnerstag, 16. April 2026 09:04 von Leander Jedamus
@@ -433,7 +433,7 @@ $(foreach lib,$(LIB_NAMES),$(eval $(call create-lib-rule,$(lib))))
 install:		$(PROJECT_FILES) $(PROGRAMS)
 			@sh ./install_bin.sh $(BINDIR) $(PROGRAM1) $(PROGRAM2)
 ifneq ($(link_switch),static)
-			@sh ./install_lib.sh $(LIBDIR) $(LIB_ARCHIVES)
+			@cd $(BUILDLIB) && sh $(WORKDIR)/install_lib.sh $(LIBDIR) $(LIB_ARCHIVES)
 endif
 			@sh ./install_locale.sh $(LOCALEDIR) $(PROJECT).mo
 
