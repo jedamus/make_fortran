@@ -1,0 +1,24 @@
+! erzeugt Donnerstag, 07. Mai 2026 06:39 (C) 2026 von Leander Jedamus
+! modifiziert Donnerstag, 07. Mai 2026 06:47 von Leander Jedamus
+       
+MODULE  project
+
+  IMPLICIT NONE
+  PRIVATE
+
+  PUBLIC :: greet
+
+  CONTAINS
+
+  SUBROUTINE greet()
+
+    IMPLICIT NONE
+
+    WRITE(*,*) "Author: Leander Jedamus"
+
+  END SUBROUTINE greet
+
+END MODULE project
+       
+! vim:ai sw=4 expandtab
+
