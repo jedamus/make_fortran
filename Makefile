@@ -1,5 +1,5 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
-# modifiziert Donnerstag, 07. Mai 2026 11:55 von Leander Jedamus
+# modifiziert Donnerstag, 07. Mai 2026 13:46 von Leander Jedamus
 # modifiziert Mittwoch, 06. Mai 2026 18:49 von Leander Jedamus
 # modifiziert Samstag, 18. April 2026 13:51 von Leander Jedamus
 # modifiziert Donnerstag, 16. April 2026 09:04 von Leander Jedamus
@@ -123,10 +123,17 @@ NMFILE			:= nm.out.txt
 
 STRIP			:= strip
 
+SRCDIR			= src
+BUILDDIR		= build/$(PLATFORM)
+MODDIR			= $(BUILDDIR)/mod
+SRCLIB			= $(SRCDIR)/lib
+BUILDLIB		= $(BUILDDIR)/lib
+
 #include Makefile.c_and_c++
 #include Makefile.cobol
 #include Makefile.cweb_and_noweb
 #include Makefile.documentation
+include Makefile.FORTRAN
 #include Makefile.flex_and_bison
 #include Makefile.latex
 #include Makefile.modula2
@@ -201,6 +208,14 @@ ifeq ($(machtype),MacOS)
   LDLIBS		+= -lintl
 else
   LDLIBS		+= -lpopt # command line parsing
+endif
+
+ifeq ($(DEBUG),true)
+  ifeq ($(FC),gfortran)
+    LDFLAGS		+= -Wl,--rpath=$(BUILDLIB)
+  else
+    LDFLAGS		+= -L $(BUILDLIB) -Xlinker -rpath -Xlinker $(BUILDLIB)
+  endif
 endif
 
 define debug
@@ -311,12 +326,6 @@ endif
 DEFINES			= $(PLATFORM_DEFINES) $(ARCH_DEFINES)
 FFLAGS	    		+= $(DEFINES)
 
-SRCDIR			= src
-BUILDDIR		= build/$(PLATFORM)
-MODDIR			= $(BUILDDIR)/mod
-SRCLIB			= $(SRCDIR)/lib
-BUILDLIB		= $(BUILDDIR)/lib
-
 MODFLAG			= -J $(MODDIR)
 FINCLUDES		= -I $(BUILDDIR) -I $(SRCDIR) -I $(MODDIR) $(addprefix -I ,$(wildcard $(SRCLIB)/*))
 LDFLAGS			+= -L $(BUILDLIB) $(patsubst $(SRCLIB)/%,-l%,$(wildcard $(SRCLIB)/*))
@@ -410,13 +419,12 @@ PROGRAM1		:= $(BUILDDIR)/darlehen$(EXT)
 
 PROGRAMS		:= $(PROJECT_FILES) $(strip $(PROGRAM1) $(PROGRAM2))
 
-include Makefile.FORTRAN
-
 .PHONY:			all
 all:			$(PROJECT_FILES) createdirs $(PROGRAMS)
 			@echo done.
 
 $(PROGRAM1):		$(DEPENDS) $(MAIN_OBJECTS) $(LIB_OBJECTS) $(LIB_ARCHIVES)
+			@echo "PROGRAM1:"
 			$(FC) $(strip $(FFLAGS) $(FINCLUDES) -o $@ $(MAIN_OBJECTS) $(LDFLAGS))
 
 $(foreach lib,$(LIB_NAMES),$(eval $(call create-lib-rule,$(lib))))
@@ -459,6 +467,7 @@ debug:
 			@echo "$$""(OBJS1)=$(strip $(OBJS1))"
 			@echo "$$""(PROGRAMS)=$(strip $(PROGRAMS))"
 			@echo "$$""(PC)=$(strip $(PC))"
+			@echo "$$""(FC)=\"$(strip $(FC))\""
 			@echo "$$""(DATETIME)=$(strip $(DATETIME))"
 			@echo "$$""(LIB1OBJS)=$(strip $(LIB1OBJS))"
 			@echo "$$""(ALL_SOURCES)=$(strip $(ALL_SOURCES))"
