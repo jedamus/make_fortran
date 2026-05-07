@@ -1,0 +1,15 @@
+/* -*- C -*- */
+/* alias_fix.c */
+/* erzeugt Donnerstag, 07. Mai 2026 16:33 (C) 2026 von Leander Jedamus */
+/* modifiziert Donnerstag, 07. Mai 2026 16:35 von Leander Jedamus */
+
+// alias_fix.c
+
+void c_f_pointer_(void);
+
+void c_f_pointer(void) {
+  c_f_pointer_();
+}
+
+/* vim:set cindent ai sw=2: */
+

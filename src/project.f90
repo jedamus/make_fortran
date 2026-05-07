@@ -1,6 +1,6 @@
 ! project.f90 
-! erzeugt Donnerstag, 07. Mai 2026 08:29 (C) 2026 von Leander Jedamus
-! modifiziert Donnerstag, 07. Mai 2026 08:29 von Leander Jedamus
+! erzeugt Donnerstag, 07. Mai 2026 14:16 (C) 2026 von Leander Jedamus
+! modifiziert Donnerstag, 07. Mai 2026 14:16 von Leander Jedamus
 
 MODULE project
 
