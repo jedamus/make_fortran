@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 
 # erzeugt Donnerstag, 02. November 2023 22:07 (C) 2023 von Leander Jedamus
+# modifiziert Samstag, 18. April 2026 05:15 von Leander Jedamus
 # modifiziert Donnerstag, 16. April 2026 06:08 von Leander Jedamus
 # modifiziert Freitag, 04. Oktober 2024 18:19 von Leander Jedamus
 # modifiziert Samstag, 24. August 2024 09:13 von Leander Jedamus
@@ -28,6 +29,7 @@ export TRANSLATE="${TRANSLATE:-"de en"}"
 
 locale=locale
 src=src
+test_src=test_src
 svn=.svn
 git=.git
 BACKUPDIR=$1
@@ -44,7 +46,7 @@ mkdir -p $backup/$BACKUPDIR
 echo "copying files."
 cp -p $FILES $backup/$BACKUPDIR
 
-dirs="$src $svn $git $locale"
+dirs="$src $test_src $svn $git $locale"
 
 for dir in $dirs; do
   if [ -d $dir ]; then
