@@ -1,5 +1,5 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
-# modifiziert Donnerstag, 07. Mai 2026 13:46 von Leander Jedamus
+# modifiziert Donnerstag, 07. Mai 2026 14:21 von Leander Jedamus
 # modifiziert Mittwoch, 06. Mai 2026 18:49 von Leander Jedamus
 # modifiziert Samstag, 18. April 2026 13:51 von Leander Jedamus
 # modifiziert Donnerstag, 16. April 2026 09:04 von Leander Jedamus
@@ -83,7 +83,8 @@ DATE			:= $(shell date +\"%y%m%d\")
 DATETIME		:= $(shell date +\"%d.%m.%Y\ %H:%M\")
 PROJECT			:= $(shell cat project.txt)
 # PROJECT		:= va_args
-PROJECT_FILES		= $(SRCDIR)/project.f90
+PROJECT_F90		= $(SRCDIR)/project.f90
+PROJECT_FILES		= $(PROJECT_F90)
 
 PREFIX			:= /usr/local
 BINDIR			:= $(PREFIX)/bin
@@ -424,7 +425,6 @@ all:			$(PROJECT_FILES) createdirs $(PROGRAMS)
 			@echo done.
 
 $(PROGRAM1):		$(DEPENDS) $(MAIN_OBJECTS) $(LIB_OBJECTS) $(LIB_ARCHIVES)
-			@echo "PROGRAM1:"
 			$(FC) $(strip $(FFLAGS) $(FINCLUDES) -o $@ $(MAIN_OBJECTS) $(LDFLAGS))
 
 $(foreach lib,$(LIB_NAMES),$(eval $(call create-lib-rule,$(lib))))
@@ -432,7 +432,7 @@ $(foreach lib,$(LIB_NAMES),$(eval $(call create-lib-rule,$(lib))))
 .PHONY:			install
 install:		$(PROJECT_FILES) $(PROGRAMS)
 			@sh ./install_bin.sh $(BINDIR) $(PROGRAM1) $(PROGRAM2)
-#			@sh ./install_lib.sh $(LIBDIR) $(LIB2RARY)
+			@sh ./install_lib.sh $(LIBDIR) $(LIB_ARCHIVES)
 			@sh ./install_locale.sh $(LOCALEDIR) $(PROJECT).mo
 
 .PHONY:			bin_dist
@@ -546,13 +546,13 @@ $(PRINTFILE):		$(FILES)
 .PHONY:			dummy
 dummy:
 
-$(SRCDIR)/project.f90:	project.txt version.txt updated.txt author.txt author_email.txt license.txt maintainer.txt maintainer_email.txt url.txt \
+$(PROJECT_F90):		project.txt version.txt updated.txt author.txt author_email.txt license.txt maintainer.txt maintainer_email.txt url.txt \
 			    description.txt years.txt create_project.sh
 			@echo "creating $@"
 			@./create_project.sh $@
 
 .PHONY:			create_project
-create_project:		$(SRCDIR)/project.f90
+create_project:		$(PROJECT_F90)
 
 .PHONY:			depend
 depend:			$(DEPENDS)
