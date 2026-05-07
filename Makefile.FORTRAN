@@ -1,4 +1,5 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
+# modifiziert Donnerstag, 07. Mai 2026 10:31 von Leander Jedamus
 # modifiziert Mittwoch, 06. Mai 2026 19:06 von Leander Jedamus
 # modifiziert Samstag, 18. April 2026 13:44 von Leander Jedamus
 # modifiziert Donnerstag, 16. April 2026 07:05 von Leander Jedamus
@@ -44,6 +45,9 @@ AS		:= as
 
 COMPILE.f	= $(FC) $(strip $(FFLAGS) $(MODFLAG) $(FINCLUDES) $(TARGET_ARCH)) -c
 COMPILE.F	= $(FC) -cpp $(strip $(FFLAGS) $(MODFLAG) $(FINCLUDES) $(TARGET_ARCH)) -c
+COMPILE_SHARED.f = $(FC) -fPIC $(strip $(FFLAGS) $(MODFLAG) $(FINCLUDES) $(TARGET_ARCH)) -c
+COMPILE_SHARED.F = $(FC) -fPIC -cpp $(strip $(FFLAGS) $(MODFLAG) $(FINCLUDES) $(TARGET_ARCH)) -c
+LINK_SHARED_LIB = $(FC) -shared $(strip $(FFLAGS) $(MODFLAG) $(FINCLUDES) $(TARGET_ARCH))
 DEPEND.f	= $(FC) -M $(strip $(DEFINES) $(MODFLAG))
 #DEPEND.f	= $(FC) -M $(strip $(DEFINES) $(MODFLAG) $(FINCLUDES))
 DEPEND.F	= $(FC) -cpp -M $(strip $(DEFINES) $(MODFLAG))
@@ -61,6 +65,23 @@ $(RM) $@
 $(COMPILE.F) $< -o $@
 endef
 
+define compile_shared.f
+$(RM) $@
+@$(MKDIR) $(dir $@)
+$(COMPILE_SHARED.f) $< -o $@
+endef
+
+define compile_shared.F
+$(RM) $@
+@$(MKDIR) $(dir $@)
+$(COMPILE_SHARED.F) $< -o $@
+endef
+
+define create-shared-lib
+$(RM) $@
+$(LINK_SHARED_LIB) -o $@ $^
+endef
+
 define depend.f
 $(RM) $@
 @$(MKDIR) $(dir $@)
@@ -73,11 +94,18 @@ $(RM) $@
 $(DEPEND.F) $< | sed 's|\(.*\)\.o\([ :]*\)|$(dir $@)\1.o $@ \2 |g' > $@
 endef
 
+ifeq ($(link_switch),static)
 define create-lib-rule
-$$(BUILDLIB)/lib$(1).a: $$(wildcard $$(BUILDLIB)/$(1)/*.o)
+$$(BUILDLIB)/lib$(1).a: $$(wildcard $$(BUILDLIB)/$(1)/*.ol)
 	$$(AR) rcs $$@ $$^
 	$$(RANLIB) $$@
 endef
+else
+define create-lib-rule
+$$(BUILDLIB)/lib$(1).so: $$(wildcard $$(BUILDLIB)/$(1)/*.osl)
+	$$(create-shared-lib)
+endef
+endif
 
 # .o object files
 
@@ -188,55 +216,55 @@ $(BUILDDIR)/%.ol:   $(SRCDIR)/%.F08
 # .osl object files
 
 $(BUILDDIR)/%.osl:  $(SRCDIR)/%.f
-		    $(compile.f)
+		    $(compile_shared.f)
 
 $(BUILDDIR)/%.osl:  $(SRCDIR)/%.F
-		    $(compile.F)
+		    $(compile_shared.F)
 
 $(BUILDDIR)/%.osl:  $(SRCDIR)/%.for
-		    $(compile.f)
+		    $(compile_shared.f)
 
 $(BUILDDIR)/%.osl:  $(SRCDIR)/%.FOR
-		    $(compile.F)
+		    $(compile_shared.F)
 
 $(BUILDDIR)/%.osl:  $(SRCDIR)/%.ftn
-		    $(compile.f)
+		    $(compile_shared.f)
 
 $(BUILDDIR)/%.osl:  $(SRCDIR)/%.FTN
-		    $(compile.F)
+		    $(compile_shared.F)
 
 $(BUILDDIR)/%.osl:  $(SRCDIR)/%.FPP
-		    $(compile.F)
+		    $(compile_shared.F)
 
 $(BUILDDIR)/%.osl:  $(SRCDIR)/%.f77
-		    $(compile.f)
+		    $(compile_shared.f)
 
 $(BUILDDIR)/%.osl:  $(SRCDIR)/%.F77
-		    $(compile.F)
+		    $(compile_shared.F)
 
 $(BUILDDIR)/%.osl:  $(SRCDIR)/%.f90
-		    $(compile.f)
+		    $(compile_shared.f)
 
 $(BUILDDIR)/%.osl:  $(SRCDIR)/%.F90
-		    $(compile.F)
+		    $(compile_shared.F)
 
 $(BUILDDIR)/%.osl:  $(SRCDIR)/%.f95
-		    $(compile.f)
+		    $(compile_shared.f)
 
 $(BUILDDIR)/%.osl:  $(SRCDIR)/%.F95
-		    $(compile.F)
+		    $(compile_shared.F)
 
 $(BUILDDIR)/%.osl:  $(SRCDIR)/%.f03
-		    $(compile.f)
+		    $(compile_shared.f)
 
 $(BUILDDIR)/%.osl:  $(SRCDIR)/%.F03
-		    $(compile.F)
+		    $(compile_shared.F)
 
 $(BUILDDIR)/%.osl:  $(SRCDIR)/%.f08
-		    $(compile.f)
+		    $(compile_shared.f)
 
 $(BUILDDIR)/%.osl:  $(SRCDIR)/%.F08
-		    $(compile.F)
+		    $(compile_shared.F)
 
 # dependencies
 

@@ -1,5 +1,5 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
-# modifiziert Donnerstag, 07. Mai 2026 07:30 von Leander Jedamus
+# modifiziert Donnerstag, 07. Mai 2026 10:43 von Leander Jedamus
 # modifiziert Mittwoch, 06. Mai 2026 18:49 von Leander Jedamus
 # modifiziert Samstag, 18. April 2026 13:51 von Leander Jedamus
 # modifiziert Donnerstag, 16. April 2026 09:04 von Leander Jedamus
@@ -73,7 +73,7 @@ PLATFORM		?= linux
 debug_switch		:= true# false
 
 # set link_switch to shared, if there is at least one shared library:
-link_switch		:= static# shared
+link_switch		:= shared# static# shared
 
 DEPENDFILE		:= .depend
 PRINTFILE		:= .print
@@ -234,6 +234,7 @@ FILES			:= # put your source and other files here, that you \
 
 FILES			+= Makefile
 FILES			+= run_me_once.sh
+FILES			+= README.md
 FILES			+= depend.sh
 FILES			+= translate.sh
 FILES			+= backup.sh
@@ -346,29 +347,53 @@ MAIN_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.o,$(filter %.f,$(MAIN_SOU
 			  $(patsubst $(SRCDIR)/%.F03,$(BUILDDIR)/%.o,$(filter %.F03,$(MAIN_SOURCES)))  \
 			  $(patsubst $(SRCDIR)/%.f08,$(BUILDDIR)/%.o,$(filter %.f08,$(MAIN_SOURCES)))  \
 			  $(patsubst $(SRCDIR)/%.F08,$(BUILDDIR)/%.o,$(filter %.F08,$(MAIN_SOURCES)))
+ifeq  ($(link_switch),static)
+LIB_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.ol,$(filter %.f,$(LIB_SOURCES))) \
+			  $(patsubst $(SRCDIR)/%.F,$(BUILDDIR)/%.ol,$(filter %.F,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.for,$(BUILDDIR)/%.ol,$(filter %.for,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.FOR,$(BUILDDIR)/%.ol,$(filter %.FOR,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.ftn,$(BUILDDIR)/%.ol,$(filter %.ftn,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.FTN,$(BUILDDIR)/%.ol,$(filter %.FTN,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.FPP,$(BUILDDIR)/%.ol,$(filter %.FPP,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f77,$(BUILDDIR)/%.ol,$(filter %.f77,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F77,$(BUILDDIR)/%.ol,$(filter %.F77,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f90,$(BUILDDIR)/%.ol,$(filter %.f90,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F90,$(BUILDDIR)/%.ol,$(filter %.F90,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f95,$(BUILDDIR)/%.ol,$(filter %.f95,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F95,$(BUILDDIR)/%.ol,$(filter %.F95,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f03,$(BUILDDIR)/%.ol,$(filter %.f03,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F03,$(BUILDDIR)/%.ol,$(filter %.F03,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f08,$(BUILDDIR)/%.ol,$(filter %.f08,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F08,$(BUILDDIR)/%.ol,$(filter %.F08,$(LIB_SOURCES)))
+DEPENDS			= $(MAIN_OBJECTS:.o=.d) $(LIB_OBJECTS:.ol=.d)
+else
+LIB_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.osl,$(filter %.f,$(LIB_SOURCES))) \
+			  $(patsubst $(SRCDIR)/%.F,$(BUILDDIR)/%.osl,$(filter %.F,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.for,$(BUILDDIR)/%.osl,$(filter %.for,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.FOR,$(BUILDDIR)/%.osl,$(filter %.FOR,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.ftn,$(BUILDDIR)/%.osl,$(filter %.ftn,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.FTN,$(BUILDDIR)/%.osl,$(filter %.FTN,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.FPP,$(BUILDDIR)/%.osl,$(filter %.FPP,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f77,$(BUILDDIR)/%.osl,$(filter %.f77,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F77,$(BUILDDIR)/%.osl,$(filter %.F77,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f90,$(BUILDDIR)/%.osl,$(filter %.f90,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F90,$(BUILDDIR)/%.osl,$(filter %.F90,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f95,$(BUILDDIR)/%.osl,$(filter %.f95,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F95,$(BUILDDIR)/%.osl,$(filter %.F95,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f03,$(BUILDDIR)/%.osl,$(filter %.f03,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F03,$(BUILDDIR)/%.osl,$(filter %.F03,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.f08,$(BUILDDIR)/%.osl,$(filter %.f08,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.F08,$(BUILDDIR)/%.osl,$(filter %.F08,$(LIB_SOURCES)))
+DEPENDS			= $(MAIN_OBJECTS:.o=.d) $(LIB_OBJECTS:.osl=.d)
+endif
 
-LIB_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.o,$(filter %.f,$(LIB_SOURCES))) \
-			  $(patsubst $(SRCDIR)/%.F,$(BUILDDIR)/%.o,$(filter %.F,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.for,$(BUILDDIR)/%.o,$(filter %.for,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.FOR,$(BUILDDIR)/%.o,$(filter %.FOR,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.ftn,$(BUILDDIR)/%.o,$(filter %.ftn,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.FTN,$(BUILDDIR)/%.o,$(filter %.FTN,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.FPP,$(BUILDDIR)/%.o,$(filter %.FPP,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.f77,$(BUILDDIR)/%.o,$(filter %.f77,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.F77,$(BUILDDIR)/%.o,$(filter %.F77,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.f90,$(BUILDDIR)/%.o,$(filter %.f90,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.F90,$(BUILDDIR)/%.o,$(filter %.F90,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.f95,$(BUILDDIR)/%.o,$(filter %.f95,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.F95,$(BUILDDIR)/%.o,$(filter %.F95,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.f03,$(BUILDDIR)/%.o,$(filter %.f03,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.F03,$(BUILDDIR)/%.o,$(filter %.F03,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.f08,$(BUILDDIR)/%.o,$(filter %.f08,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.F08,$(BUILDDIR)/%.o,$(filter %.F08,$(LIB_SOURCES)))
-
-DEPENDS			= $(MAIN_OBJECTS:.o=.d) $(LIB_OBJECTS:.o=.d)
 
 LIB_NAMES		= $(notdir $(wildcard $(SRCLIB)/*))
+ifeq ($(link_switch),static)
 LIB_ARCHIVES		= $(foreach lib,$(LIB_NAMES), $(addprefix $(BUILDLIB)/lib,$(addsuffix .a,$(lib))))
+else
+LIB_ARCHIVES		= $(foreach lib,$(LIB_NAMES), $(addprefix $(BUILDLIB)/lib,$(addsuffix .so,$(lib))))
+endif
 
 CLEAN			= $(strip $(filter %.o,$(OBJS)) \
 		            $(filter %.osl,$(OBJS)) \
