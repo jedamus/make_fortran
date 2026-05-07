@@ -1,5 +1,6 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
-# modifiziert Samstag, 18. April 2026 10:02 von Leander Jedamus
+# modifiziert Mittwoch, 06. Mai 2026 19:06 von Leander Jedamus
+# modifiziert Samstag, 18. April 2026 13:44 von Leander Jedamus
 # modifiziert Donnerstag, 16. April 2026 07:05 von Leander Jedamus
 # modifiziert Mittwoch, 15. April 2026 19:42 von Leander Jedamus
 # modifiziert Samstag, 09. September 2023 09:31 von Leander Jedamus
@@ -12,7 +13,7 @@
 # modifiziert Mittwoch, 08. Juli 2015 15:20 von Leander Jedamus
 # modifiziert Samstag, 04. Juli 2015 14:11 von Leander Jedamus
 
-$(echo "test $(SRCDIR)")
+# $(echo "test $(SRCDIR)")
 
 ifeq ($(PLATFORM), windows)
   FC		:= x86_64-w64-mingw32-gfortran
@@ -63,13 +64,19 @@ endef
 define depend.f
 $(RM) $@
 @$(MKDIR) $(dir $@)
-$(DEPEND.F) $< | sed 's|\(.*\)\.o\([ :]*\)|$(dir $@)\1.o $@ \2 | g' > $@
+$(DEPEND.F) $< | sed 's|\(.*\)\.o\([ :]*\)|$(dir $@)\1.o $@ \2 |g' > $@
 endef
 
 define depend.F
 $(RM) $@
 @$(MKDIR) $(dir $@)
-$(DEPEND.F) $< | sed 's#\(.*\)\.o\([ :]*\)#$(dir $@)\1.o $@ \2 # g' > $@
+$(DEPEND.F) $< | sed 's|\(.*\)\.o\([ :]*\)|$(dir $@)\1.o $@ \2 |g' > $@
+endef
+
+define create-lib-rule
+$$(BUILDLIB)/lib$(1).a: $$(wildcard $$(BUILDLIB)/$(1)/*.o)
+	$$(AR) rcs $$@ $$^
+	$$(RANLIB) $$@
 endef
 
 # .o object files
