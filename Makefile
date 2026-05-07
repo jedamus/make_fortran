@@ -1,5 +1,5 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
-# modifiziert Donnerstag, 07. Mai 2026 14:54 von Leander Jedamus
+# modifiziert Donnerstag, 07. Mai 2026 16:46 von Leander Jedamus
 # modifiziert Mittwoch, 06. Mai 2026 18:49 von Leander Jedamus
 # modifiziert Samstag, 18. April 2026 13:51 von Leander Jedamus
 # modifiziert Donnerstag, 16. April 2026 09:04 von Leander Jedamus
@@ -194,7 +194,7 @@ CPPFLAGS		+= # -traditional
 CPPFLAGS		+= # -funroll-loops -fomit-frame-pointer
 CXXFLAGS		+= -std=c++17 # -felide-constructors -fmemoize-lookups
 LDFLAGS			+= -L .# -s
-LDLIBS			+= -lm
+LDLIBS			+= -lgfortran -lm 
 # LDLIBS		+= -lefence
 LDLIBS			+= # -lvga
 LDLIBS			+= # -ly
@@ -329,7 +329,7 @@ FFLAGS	    		+= $(DEFINES)
 
 MODFLAG			= -J $(MODDIR)
 FINCLUDES		= -I $(BUILDDIR) -I $(SRCDIR) -I $(MODDIR) $(addprefix -I ,$(wildcard $(SRCLIB)/*))
-LDFLAGS			+= -L $(BUILDLIB) $(patsubst $(SRCLIB)/%,-l%,$(wildcard $(SRCLIB)/*))
+LDFLAGS			+= -L $(BUILDLIB) $(patsubst $(SRCLIB)/%,-l%,$(wildcard $(SRCLIB)/*)) $(LDLIBS)
 
 ALL_SOURCES		= $(shell $(FIND) $(SRCDIR) -type f \( -name "*.f" -o -name "*.F" \
 			  -o -name "*.for" -o -name "*.FOR" -o -name "*.ftn" -o -name "*.FTN" \
@@ -425,7 +425,7 @@ all:			$(PROJECT_FILES) createdirs $(PROGRAMS)
 			@echo done.
 
 $(PROGRAM1):		$(DEPENDS) $(MAIN_OBJECTS) $(LIB_OBJECTS) $(LIB_ARCHIVES)
-			$(FC) $(strip $(FFLAGS) $(FINCLUDES) -o $@ $(MAIN_OBJECTS) $(LDFLAGS))
+			$(FC) $(strip $(FFLAGS) $(FINCLUDES) -o $@ $(MAIN_OBJECTS) $(BUILDDIR)/c_helper.o $(LDFLAGS))
 
 $(foreach lib,$(LIB_NAMES),$(eval $(call create-lib-rule,$(lib))))
 
