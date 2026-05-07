@@ -1,5 +1,7 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
-# modifiziert Samstag, 18. April 2026 09:41 von Leander Jedamus
+# modifiziert Donnerstag, 07. Mai 2026 07:30 von Leander Jedamus
+# modifiziert Mittwoch, 06. Mai 2026 18:49 von Leander Jedamus
+# modifiziert Samstag, 18. April 2026 13:51 von Leander Jedamus
 # modifiziert Donnerstag, 16. April 2026 09:04 von Leander Jedamus
 # modifiziert Mittwoch, 15. April 2026 20:51 von Leander Jedamus
 # modifiziert Donnerstag, 07. November 2024 10:19 von Leander Jedamus
@@ -76,11 +78,12 @@ link_switch		:= static# shared
 DEPENDFILE		:= .depend
 PRINTFILE		:= .print
 
+WORKDIR			= $(shell pwd)
 DATE			:= $(shell date +\"%y%m%d\")
 DATETIME		:= $(shell date +\"%d.%m.%Y\ %H:%M\")
 PROJECT			:= $(shell cat project.txt)
 # PROJECT		:= va_args
-PROJECT_FILES		:= project.h version.h
+PROJECT_FILES		= $(SRCDIR)/project.f90
 
 PREFIX			:= /usr/local
 BINDIR			:= $(PREFIX)/bin
@@ -307,14 +310,15 @@ endif
 DEFINES			= $(PLATFORM_DEFINES) $(ARCH_DEFINES)
 FFLAGS	    		+= $(DEFINES)
 
-SRCDIR			= ./src
-BUILDDIR		= ./build/$(PLATFORM)
-SRCLIB			= ./$(SRCDIR)/lib
-BUILDLIB		= ./$(BUILDDIR)/lib
+SRCDIR			= src
+BUILDDIR		= build/$(PLATFORM)
+MODDIR			= $(BUILDDIR)/mod
+SRCLIB			= $(SRCDIR)/lib
+BUILDLIB		= $(BUILDDIR)/lib
 
-MODFLAG			= -J$(BUILDDIR)
-FINCLUDES		= -I$(BUILDDIR) -I$(SRCDIR) $(addprefix -I,$(wildcard $(SRCLIB)/*))
-LDFLAGS			+= -L$(BUILDLIB) $(patsubst $(SRCLIB)/%,-l%,$(wildcard $(SRCLIB)/*))
+MODFLAG			= -J $(MODDIR)
+FINCLUDES		= -I $(BUILDDIR) -I $(SRCDIR) -I $(MODDIR) $(addprefix -I ,$(wildcard $(SRCLIB)/*))
+LDFLAGS			+= -L $(BUILDLIB) $(patsubst $(SRCLIB)/%,-l%,$(wildcard $(SRCLIB)/*))
 
 ALL_SOURCES		= $(shell $(FIND) $(SRCDIR) -type f \( -name "*.f" -o -name "*.F" \
 			  -o -name "*.for" -o -name "*.FOR" -o -name "*.ftn" -o -name "*.FTN" \
@@ -384,16 +388,11 @@ PROGRAMS		:= $(PROJECT_FILES) $(strip $(PROGRAM1) $(PROGRAM2))
 include Makefile.FORTRAN
 
 .PHONY:			all
-all:			createdirs $(PROGRAMS)
+all:			$(PROJECT_FILES) createdirs $(PROGRAMS)
 			@echo done.
 
 $(PROGRAM1):		$(DEPENDS) $(MAIN_OBJECTS) $(LIB_OBJECTS) $(LIB_ARCHIVES)
 			$(FC) $(strip $(FFLAGS) $(FINCLUDES) -o $@ $(MAIN_OBJECTS) $(LDFLAGS))
-
-define create-lib-rule
-$$(BUILDLIB)/lib$(1).a: $$(wildcard $$(BUILDLIB)/$(1)/*.o)
-	$$(AR) rcs $$@ $$^
-endef
 
 $(foreach lib,$(LIB_NAMES),$(eval $(call create-lib-rule,$(lib))))
 
@@ -415,8 +414,13 @@ strip:			$(PROGRAMS)
 .PHONY:			createdirs
 createdirs:
 			@$(MKDIR) $(BUILDDIR)
-			@cd $(SRCDIR) && $(FIND) . -type d ! -path . -exec $(MKDIR) ../$(BUILDDIR)/{} \;
+			@$(MKDIR) $(MODDIR)
+			@cd $(SRCDIR) && $(FIND) . -type d ! -path . -exec $(MKDIR) $(WORKDIR)/$(BUILDDIR)/{} \;
 
+.PHONY:			cleanup
+cleanup:
+			@cd $(BUILDDIR) && $(FIND) . -name "*.d" -type f -size 0c -exec $(RM) {} \;
+			
 .PHONY:			debug
 debug:
 			@echo "$$""(CLEAN)=$(strip $(CLEAN))"
@@ -447,6 +451,8 @@ debug:
 			@echo "$$""(FFLAGS)=$(strip $(FFLAGS))"
 			@echo "$$""(FINCLUDES)=$(strip $(FINCLUDES))"
 			@echo "$$""(LDFLAGS)=$(strip $(LDFLAGS))"
+			@echo "$$""(WORKDIR)=$(strip $(WORKDIR))"
+			@echo "$$""(MODDIR)=$(strip $(MODDIR))"
 
 .PHONY:			debugger
 debugger:		$(PROGRAM1)
@@ -506,19 +512,13 @@ $(PRINTFILE):		$(FILES)
 .PHONY:			dummy
 dummy:
 
-project.h:		project.txt author.txt author_email.txt license.txt maintainer.txt maintainer_email.txt url.txt description.txt years.txt create_project.sh
+$(SRCDIR)/project.f90:	project.txt version.txt updated.txt author.txt author_email.txt license.txt maintainer.txt maintainer_email.txt url.txt \
+			    description.txt years.txt create_project.sh
 			@echo "creating $@"
 			@./create_project.sh $@
 
-version.h:		version.txt author.txt updated.txt create_version.sh
-			@echo "creating $@"
-			@./create_version.sh $@
-
 .PHONY:			create_project
-create_project:		project.h version.h
-
-.PHONY:			update_version
-update_version:		version.h
+create_project:		$(SRCDIR)/project.f90
 
 .PHONY:			depend
 depend:			$(DEPENDS)
