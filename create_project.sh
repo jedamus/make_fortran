@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 
 # erzeugt Freitag, 16. Februar 2024 19:38 (C) 2024 von Leander Jedamus
+# modifiziert Donnerstag, 07. Mai 2026 08:28 von Leander Jedamus
 # modifiziert Montag, 30. September 2024 23:26 von Leander Jedamus
 # modifiziert Dienstag, 10. September 2024 11:02 von Leander Jedamus
 # modifiziert Freitag, 16. August 2024 09:02 von Leander Jedamus
@@ -27,7 +28,12 @@ else
   base_filename=$2
 fi
 
+PROJECT=$(basename $base_filename .f90)
+SUBROUTINE="greet"
+
 project_filename="project.txt"
+version_filename="version.txt"
+updated_filename="updated.txt"
 author_filename="author.txt"
 author_email_filename="author_email.txt"
 license_filename="license.txt"
@@ -48,6 +54,8 @@ for file in $project_filename $author_filename $author_email_filename $license_f
 done
 
 project=$(cat $project_filename)
+version=$(cat $version_filename)
+updated=$(cat $updated_filename)
 author=$(cat $author_filename)
 author_email=$(cat $author_email_filename)
 license=$(cat $license_filename)
@@ -62,28 +70,45 @@ FILENAME=$(echo $base_filename | sed -e 's/\./_/g' | tr [:lower:] [:upper:])
 YEAR=$(date +"%Y")
 DATETIME=$(date +"%A, %d. %B %Y %H:%M")
 
+if [ ! -z "$maintainer" ]; then
+  MAINTAINER="WRITE(*,*) \"maintained by $maintainer <$maintainer_email>\""
+else
+  MAINTAINER=""
+fi
+
+if [ ! -z "$license" ]; then
+  LICENSE="WRITE(*,*) 'published under license \"$license\"'"
+else
+  LICENSE=""
+fi
+
 cat <<EOF > $filename
-/* -*- C -*- */
-/* $base_filename */
-/* erzeugt $DATETIME (C) $YEAR von $author */
-/* modifiziert $DATETIME von $author */
+! $base_filename 
+! erzeugt $DATETIME (C) $YEAR von $author
+! modifiziert $DATETIME von $author
 
-#ifndef $FILENAME
-#define $FILENAME 1
+MODULE $PROJECT
 
-#define PROJECT "$project"
-#define AUTHOR "$author"
-#define AUTHOR_EMAIL "$author_email"
-#define LICENSE "$license"
-#define MAINTAINER "$maintainer"
-#define MAINTAINER_EMAIL "$maintainer_email"
-#define URL "$url"
-#define DESCRIPTION "$description"
-#define YEARS "$years"
+  IMPLICIT NONE
+  PRIVATE
 
-#endif /* $FILENAME */
+  PUBLIC :: $SUBROUTINE
 
-/* vim:set cindent ai sw=2 */
+  CONTAINS
+
+  SUBROUTINE $SUBROUTINE
+
+    IMPLICIT NONE
+
+    WRITE(*,*) "$project: V$version (C) $years by $author <$author_email>"
+    $MAINTAINER
+    $LICENSE
+
+  END SUBROUTINE $SUBROUTINE
+
+END MODULE $PROJECT
+
+! vim:set ai sw=2 expandtab
 
 EOF
 
