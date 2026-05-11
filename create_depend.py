@@ -2,7 +2,7 @@
 # coding=utf-8 -*- python -*-
 
 # erzeugt Sonntag, 10. Mai 2026 20:48 (C) 2026 von Leander Jedamus
-# modifiziert Montag, 11. Mai 2026 09:59 von Leander Jedamus
+# modifiziert Montag, 11. Mai 2026 13:21 von Leander Jedamus
 # modifiziert Sonntag, 10. Mai 2026 22:16 von Leander Jedamus
 
 from __future__ import print_function
@@ -119,13 +119,14 @@ def main():
   # m = regexp.match("USE test, only: test2".lower())
   # print(m.expand(r"\g<1>"))
 
-  if (len(sys.argv) < 3):
+  if (len(sys.argv) < 4):
     print("usage: {argv:s} $(BUILDDIR) $(FILES.t)".format(argv=sys.argv[0]))
     return
 
   builddir = sys.argv[1]
+  depend_filename = sys.argv[2]
 
-  for i in range(2, len(sys.argv)):
+  for i in range(3, len(sys.argv)):
     filename = sys.argv[i]
     if debug:
       print('Working on "{filename:s}"'.format(filename=filename))
@@ -155,10 +156,10 @@ def main():
       print()
     print(sep.trenner(faktor))
 
-  filename = os.path.join(builddir, '.depend')
+  # depend_filename = os.path.join(builddir, '.depend')
 
   try:
-    with open(filename, 'w') as f:
+    with open(depend_filename, 'w') as f:
       for key in d.keys():
         if debug:
           print('Key =', key)
@@ -176,9 +177,11 @@ def main():
           if s in d2.keys():
             found = True
             if is_first:
-              out = '{key:s}.d:'.format(key = key)
+              key2 = d2[key].rsplit(".")[-2]
+              out = '{key:s}.d:'.format(key = key2)
               is_first = False
-            out += ' {s:s}.d'.format(s= s)
+            s2 = d2[s].rsplit(".")[-2]
+            out += ' {s:s}.d'.format(s= s2)
           else:
             d4[s] = d3[s]
 
