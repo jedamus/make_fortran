@@ -1,4 +1,5 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
+# modifiziert Montag, 11. Mai 2026 07:15 von Leander Jedamus
 # modifiziert Donnerstag, 07. Mai 2026 12:04 von Leander Jedamus
 # modifiziert Mittwoch, 06. Mai 2026 19:06 von Leander Jedamus
 # modifiziert Samstag, 18. April 2026 13:44 von Leander Jedamus
@@ -50,10 +51,16 @@ COMPILE_STATIC.F = $(FC) -cpp $(strip $(FFLAGS) -DIS_LIB $(MODFLAG) $(FINCLUDES)
 COMPILE_SHARED.f = $(FC) -fPIC $(strip $(FFLAGS) -DIS_LIB $(MODFLAG) $(FINCLUDES) $(TARGET_ARCH)) -c
 COMPILE_SHARED.F = $(FC) -fPIC -cpp $(strip $(FFLAGS) -DIS_LIB $(MODFLAG) $(FINCLUDES) $(TARGET_ARCH)) -c
 LINK_SHARED_LIB = $(FC) -shared $(strip $(FFLAGS) $(MODFLAG) $(FINCLUDES) $(TARGET_ARCH))
-DEPEND.f	= $(FC) -M $(strip $(DEFINES) $(MODFLAG))
-#DEPEND.f	= $(FC) -M $(strip $(DEFINES) $(MODFLAG) $(FINCLUDES))
-DEPEND.F	= $(FC) -cpp -M $(strip $(DEFINES) $(MODFLAG))
-#DEPEND.F	= $(FC) -cpp -M $(strip $(DEFINES) $(MODFLAG) $(FINCLUDES))
+DEPEND.f.o	= $(FC) -M $(strip $(DEFINES) $(MODFLAG))
+#DEPEND.f.o	= $(FC) -M $(strip $(DEFINES) $(MODFLAG) $(FINCLUDES))
+DEPEND.F.o	= $(FC) -cpp -M $(strip $(DEFINES) $(MODFLAG))
+#DEPEND.F.o	= $(FC) -cpp -M $(strip $(DEFINES) $(MODFLAG) $(FINCLUDES))
+DEPEND.f.ol	= $(FC) -M $(strip $(DEFINES) -DIS_LIB $(MODFLAG)) 
+DEPEND.F.ol	= $(FC) -cpp -M $(strip $(DEFINES) -DIS_LIB $(MODFLAG))
+DEPEND.f.osl	= $(FC) -M $(strip $(DEFINES) -DIS_LIB $(MODFLAG))
+DEPEND.F.osl	= $(FC) -cpp -M $(strip $(DEFINES) -DIS_LIB $(MODFLAG))
+PRAE_T.f	= $(FC) -cpp -E $(strip $(DEFINES) -DIS_LIB
+PRAE_T.F	= $(FC) -cpp -E $(strip $(DEFINES) -DIS_LIB
 
 define compile.f
 $(RM) $@
@@ -96,16 +103,52 @@ $(RM) $@
 $(LINK_SHARED_LIB) -o $@ $^
 endef
 
-define depend.f
+define depend.f.o
 $(RM) $@
 @$(MKDIR) $(dir $@)
-$(DEPEND.F) $< | sed 's|\(.*\)\.o\([ :]*\)|$(dir $@)\1.o $@ \2 |g' > $@
+$(DEPEND.F.o) $< | sed 's|\(.*\)\.o\([ :]*\)|$(dir $@)\1.o $(dir $@)\1.t $@ \2 |g' > $@
 endef
 
-define depend.F
+define depend.F.o
 $(RM) $@
 @$(MKDIR) $(dir $@)
-$(DEPEND.F) $< | sed 's|\(.*\)\.o\([ :]*\)|$(dir $@)\1.o $@ \2 |g' > $@
+$(DEPEND.F.o) $< | sed 's|\(.*\)\.o\([ :]*\)|$(dir $@)\1.o $(dir $@)\1.t $@ \2 |g' > $@
+endef
+
+define depend.f.ol
+$(RM) $@
+@$(MKDIR) $(dir $@)
+$(DEPEND.F.ol) $< | sed 's|\(.*\)\.o\([ :]*\)|$(dir $@)\1.ol $(dir $@)\1.t $@ \2 |g' > $@
+endef
+
+define depend.F.ol
+$(RM) $@
+@$(MKDIR) $(dir $@)
+$(DEPEND.F.ol) $< | sed 's|\(.*\)\.o\([ :]*\)|$(dir $@)\1.ol $(dir $@)\1.t $@ \2 |g' > $@
+endef
+
+define depend.f.osl
+$(RM) $@
+@$(MKDIR) $(dir $@)
+$(DEPEND.F.osl) $< | sed 's|\(.*\)\.o\([ :]*\)|$(dir $@)\1.osl $(dir $@)\1.t $@ \2 |g' > $@
+endef
+
+define depend.F.osl
+$(RM) $@
+@$(MKDIR) $(dir $@)
+$(DEPEND.F.osl) $< | sed 's|\(.*\)\.o\([ :]*\)|$(dir $@)\1.osl $(dir $@)\1.t $@ \2 |g' > $@
+endef
+
+define prae_t.f
+$(RM) $@
+@$(MKDIR) $(dir $@)
+$(PRAE_T.f) $<  > $@
+endef
+
+define prae_t.F
+$(RM) $@
+@$(MKDIR) $(dir $@)
+$(PRAE_T.F) $<  > $@
 endef
 
 ifeq ($(link_switch),static)
@@ -282,58 +325,270 @@ $(BUILDDIR)/%.osl:  $(SRCDIR)/%.f08
 $(BUILDDIR)/%.osl:  $(SRCDIR)/%.F08
 		    $(compile_shared.F)
 
-# dependencies
+# library dependencies
+
+ifeq ($(link_switch),static)
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.f
+		    $(depend.f.ol)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.F
+		    $(depend.F.ol)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.for
+		    $(depend.f.ol)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.FOR
+		    $(depend.F.ol)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.ftn
+		    $(depend.f.ol)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.FTN
+		    $(depend.F.ol)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.FPP
+		    $(depend.F.ol)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.f77
+		    $(depend.f.ol)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.F77
+		    $(depend.F.ol)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.f90
+		    $(depend.f.ol)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.F90
+		    $(depend.F.ol)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.f95
+		    $(depend.f.ol)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.F95
+		    $(depend.F.ol)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.f03
+		    $(depend.f.ol)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.F03
+		    $(depend.F.ol)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.f08
+		    $(depend.f.ol)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.F08
+		    $(depend.F.ol)
+else
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.f
+		    $(depend.f.osl)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.F
+		    $(depend.F.osl)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.for
+		    $(depend.f.osl)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.FOR
+		    $(depend.F.osl)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.ftn
+		    $(depend.f.osl)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.FTN
+		    $(depend.F.osl)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.FPP
+		    $(depend.F.osl)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.f77
+		    $(depend.f.osl)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.F77
+		    $(depend.F.osl)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.f90
+		    $(depend.f.osl)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.F90
+		    $(depend.F.osl)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.f95
+		    $(depend.f.osl)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.F95
+		    $(depend.F.osl)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.f03
+		    $(depend.f.osl)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.F03
+		    $(depend.F.osl)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.f08
+		    $(depend.f.osl)
+
+$(BUILDLIB)/%.d:    $(SRCLIB)/%.F08
+		    $(depend.F.osl)
+endif
+
+# normal dependencies
 
 $(BUILDDIR)/%.d:    $(SRCDIR)/%.f
-		    $(depend.f)
+		    $(depend.f.o)
 
 $(BUILDDIR)/%.d:    $(SRCDIR)/%.F
-		    $(depend.F)
+		    $(depend.F.o)
 
 $(BUILDDIR)/%.d:    $(SRCDIR)/%.for
-		    $(depend.f)
+		    $(depend.f.o)
 
 $(BUILDDIR)/%.d:    $(SRCDIR)/%.FOR
-		    $(depend.F)
+		    $(depend.F.o)
 
 $(BUILDDIR)/%.d:    $(SRCDIR)/%.ftn
-		    $(depend.f)
+		    $(depend.f.o)
 
 $(BUILDDIR)/%.d:    $(SRCDIR)/%.FTN
-		    $(depend.F)
+		    $(depend.F.o)
 
 $(BUILDDIR)/%.d:    $(SRCDIR)/%.FPP
-		    $(depend.F)
+		    $(depend.F.o)
 
 $(BUILDDIR)/%.d:    $(SRCDIR)/%.f77
-		    $(depend.f)
+		    $(depend.f.o)
 
 $(BUILDDIR)/%.d:    $(SRCDIR)/%.F77
-		    $(depend.F)
+		    $(depend.F.o)
 
 $(BUILDDIR)/%.d:    $(SRCDIR)/%.f90
-		    $(depend.f)
+		    $(depend.f.o)
 
 $(BUILDDIR)/%.d:    $(SRCDIR)/%.F90
-		    $(depend.F)
+		    $(depend.F.o)
 
 $(BUILDDIR)/%.d:    $(SRCDIR)/%.f95
-		    $(depend.f)
+		    $(depend.f.o)
 
 $(BUILDDIR)/%.d:    $(SRCDIR)/%.F95
-		    $(depend.F)
+		    $(depend.F.o)
 
 $(BUILDDIR)/%.d:    $(SRCDIR)/%.f03
-		    $(depend.f)
+		    $(depend.f.o)
 
 $(BUILDDIR)/%.d:    $(SRCDIR)/%.F03
-		    $(depend.F)
+		    $(depend.F.o)
 
 $(BUILDDIR)/%.d:    $(SRCDIR)/%.f08
-		    $(depend.f)
+		    $(depend.f.o)
 
 $(BUILDDIR)/%.d:    $(SRCDIR)/%.F08
-		    $(depend.F)
+		    $(depend.F.o)
+
+# library praeprocessor output
+
+$(BUILDLIB)/%.t:    $(SRCLIB)/%.f
+		    $(prae_t.f)
+
+$(BUILDLIB)/%.t:    $(SRCLIB)/%.F
+		    $(prae_t.F)
+
+$(BUILDLIB)/%.t:    $(SRCLIB)/%.for
+		    $(prae_t.f)
+
+$(BUILDLIB)/%.t:    $(SRCLIB)/%.FOR
+		    $(prae_t.F)
+
+$(BUILDLIB)/%.t:    $(SRCLIB)/%.ftn
+		    $(prae_t.f)
+
+$(BUILDLIB)/%.t:    $(SRCLIB)/%.FTN
+		    $(prae_t.F)
+
+$(BUILDLIB)/%.t:    $(SRCLIB)/%.FPP
+		    $(prae_t.F)
+
+$(BUILDLIB)/%.t:    $(SRCLIB)/%.f77
+		    $(prae_t.f)
+
+$(BUILDLIB)/%.t:    $(SRCLIB)/%.F77
+		    $(prae_t.F)
+
+$(BUILDLIB)/%.t:    $(SRCLIB)/%.f90
+		    $(prae_t.f)
+
+$(BUILDLIB)/%.t:    $(SRCLIB)/%.F90
+		    $(prae_t.F)
+
+$(BUILDLIB)/%.t:    $(SRCLIB)/%.f95
+		    $(prae_t.f)
+
+$(BUILDLIB)/%.t:    $(SRCLIB)/%.F95
+		    $(prae_t.F)
+
+$(BUILDLIB)/%.t:    $(SRCLIB)/%.f03
+		    $(prae_t.f)
+
+$(BUILDLIB)/%.t:    $(SRCLIB)/%.F03
+		    $(prae_t.F)
+
+$(BUILDLIB)/%.t:    $(SRCLIB)/%.f08
+		    $(prae_t.f)
+
+$(BUILDLIB)/%.t:    $(SRCLIB)/%.F08
+		    $(prae_t.F)
+
+# normal praeprocessor output
+
+$(BUILDDIR)/%.t:    $(SRCDIR)/%.f
+		    $(prae_t.f)
+
+$(BUILDDIR)/%.t:    $(SRCDIR)/%.F
+		    $(prae_t.F)
+
+$(BUILDDIR)/%.t:    $(SRCDIR)/%.for
+		    $(prae_t.f)
+
+$(BUILDDIR)/%.t:    $(SRCDIR)/%.FOR
+		    $(prae_t.F)
+
+$(BUILDDIR)/%.t:    $(SRCDIR)/%.ftn
+		    $(prae_t.f)
+
+$(BUILDDIR)/%.t:    $(SRCDIR)/%.FTN
+		    $(prae_t.F)
+
+$(BUILDDIR)/%.t:    $(SRCDIR)/%.FPP
+		    $(prae_t.F)
+
+$(BUILDDIR)/%.t:    $(SRCDIR)/%.f77
+		    $(prae_t.f)
+
+$(BUILDDIR)/%.t:    $(SRCDIR)/%.F77
+		    $(prae_t.F)
+
+$(BUILDDIR)/%.t:    $(SRCDIR)/%.f90
+		    $(prae_t.f)
+
+$(BUILDDIR)/%.t:    $(SRCDIR)/%.F90
+		    $(prae_t.F)
+
+$(BUILDDIR)/%.t:    $(SRCDIR)/%.f95
+		    $(prae_t.f)
+
+$(BUILDDIR)/%.t:    $(SRCDIR)/%.F95
+		    $(prae_t.F)
+
+$(BUILDDIR)/%.t:    $(SRCDIR)/%.f03
+		    $(prae_t.f)
+
+$(BUILDDIR)/%.t:    $(SRCDIR)/%.F03
+		    $(prae_t.F)
+
+$(BUILDDIR)/%.t:    $(SRCDIR)/%.f08
+		    $(prae_t.f)
+
+$(BUILDDIR)/%.t:    $(SRCDIR)/%.F08
+		    $(prae_t.F)
 
 # vim:ai sw=2 noexpandtab
 
