@@ -1,5 +1,5 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
-# modifiziert Montag, 11. Mai 2026 10:05 von Leander Jedamus
+# modifiziert Montag, 11. Mai 2026 10:27 von Leander Jedamus
 # modifiziert Sonntag, 10. Mai 2026 22:17 von Leander Jedamus
 # modifiziert Donnerstag, 07. Mai 2026 16:46 von Leander Jedamus
 # modifiziert Mittwoch, 06. Mai 2026 18:49 von Leander Jedamus
@@ -429,7 +429,7 @@ PROGRAMS		:= $(PROJECT_FILES) $(strip $(PROGRAM1) $(PROGRAM2))
 all:			$(PROJECT_FILES) createdirs $(PROGRAMS)
 			@echo done.
 
-$(PROGRAM1):		$(PRAE_T) $(DEPENDS) $(MAIN_OBJECTS) $(LIB_OBJECTS) $(LIB_ARCHIVES)
+$(PROGRAM1):		$(PRAE_T) $(MAIN_OBJECTS) $(LIB_OBJECTS) $(LIB_ARCHIVES)
 			$(FC) $(strip $(FFLAGS) $(FINCLUDES) -o $@ $(MAIN_OBJECTS) $(BUILDDIR)/c_helper.o $(LDFLAGS))
 
 $(foreach lib,$(LIB_NAMES),$(eval $(call create-lib-rule,$(lib))))
@@ -463,7 +463,7 @@ cleanup:
 
 .PHONY:			firastrun
 firstrun:		$(PRAE_T)
-			./create_depend.py $(BUILDDIR) $(PRAE_T)
+			@./create_depend.py $(BUILDDIR) $(PRAE_T)
 			
 .PHONY:			debug
 debug:
@@ -578,8 +578,8 @@ depend:			$(DEPENDS)
 #			$(DEPEND.cc) $(CCSOURCES) >> $(DEPENDFILE)
 #endif
 
-.PHONY:			depend
-depend:			$(CDEPENDS) $(CCDEPENDS) ;
+# .PHONY:			depend
+# depend:			$(CDEPENDS) $(CCDEPENDS) ;
 
 .PHONY:			backup
 backup:
@@ -601,7 +601,7 @@ translate:
 # endif
 
 -include $(DEPENDFILE)
--include $(DEPENDS)
+# -include $(DEPENDS)
 
 #
 # include dependency files if exists
