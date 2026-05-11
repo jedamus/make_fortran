@@ -1,4 +1,5 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
+# modifiziert Montag, 11. Mai 2026 10:05 von Leander Jedamus
 # modifiziert Sonntag, 10. Mai 2026 22:17 von Leander Jedamus
 # modifiziert Donnerstag, 07. Mai 2026 16:46 von Leander Jedamus
 # modifiziert Mittwoch, 06. Mai 2026 18:49 von Leander Jedamus
@@ -74,9 +75,9 @@ PLATFORM		?= linux
 debug_switch		:= true# false
 
 # set link_switch to shared, if there is at least one shared library:
-link_switch		:= shared# static# shared
+link_switch		:= static# shared
 
-DEPENDFILE		:= .depend
+DEPENDFILE		:= $(BUILDDIR).depend
 PRINTFILE		:= .print
 
 WORKDIR			= $(shell pwd)
@@ -379,6 +380,7 @@ LIB_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.ol,$(filter %.f,$(LIB_SOUR
 			  $(patsubst $(SRCDIR)/%.f08,$(BUILDDIR)/%.ol,$(filter %.f08,$(LIB_SOURCES)))  \
 			  $(patsubst $(SRCDIR)/%.F08,$(BUILDDIR)/%.ol,$(filter %.F08,$(LIB_SOURCES)))
 DEPENDS			= $(MAIN_OBJECTS:.o=.d) $(LIB_OBJECTS:.ol=.d)
+PRAE_T			= $(DEPENDS:.d=.t)
 else
 LIB_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.osl,$(filter %.f,$(LIB_SOURCES))) \
 			  $(patsubst $(SRCDIR)/%.F,$(BUILDDIR)/%.osl,$(filter %.F,$(LIB_SOURCES)))  \
@@ -398,6 +400,7 @@ LIB_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.osl,$(filter %.f,$(LIB_SOU
 			  $(patsubst $(SRCDIR)/%.f08,$(BUILDDIR)/%.osl,$(filter %.f08,$(LIB_SOURCES)))  \
 			  $(patsubst $(SRCDIR)/%.F08,$(BUILDDIR)/%.osl,$(filter %.F08,$(LIB_SOURCES)))
 DEPENDS			= $(MAIN_OBJECTS:.o=.d) $(LIB_OBJECTS:.osl=.d)
+PRAE_T			= $(DEPENDS:.d=.t)
 endif
 
 LIB_NAMES		= $(notdir $(wildcard $(SRCLIB)/*))
@@ -426,7 +429,7 @@ PROGRAMS		:= $(PROJECT_FILES) $(strip $(PROGRAM1) $(PROGRAM2))
 all:			$(PROJECT_FILES) createdirs $(PROGRAMS)
 			@echo done.
 
-$(PROGRAM1):		$(DEPENDS) $(MAIN_OBJECTS) $(LIB_OBJECTS) $(LIB_ARCHIVES)
+$(PROGRAM1):		$(PRAE_T) $(DEPENDS) $(MAIN_OBJECTS) $(LIB_OBJECTS) $(LIB_ARCHIVES)
 			$(FC) $(strip $(FFLAGS) $(FINCLUDES) -o $@ $(MAIN_OBJECTS) $(BUILDDIR)/c_helper.o $(LDFLAGS))
 
 $(foreach lib,$(LIB_NAMES),$(eval $(call create-lib-rule,$(lib))))
@@ -457,6 +460,10 @@ createdirs:
 .PHONY:			cleanup
 cleanup:
 			@cd $(BUILDDIR) && $(FIND) . -name "*.d" -type f -size 0c -exec $(RM) {} \;
+
+.PHONY:			firastrun
+firstrun:		$(PRAE_T)
+			./create_depend.py $(BUILDDIR) $(PRAE_T)
 			
 .PHONY:			debug
 debug:
@@ -530,7 +537,7 @@ doc:			$(INFOFILE) $(XMLFILE) $(TXTFILE) \
 
 .PHONY:			clean
 clean:
-			$(RM) -r $(BUILDDIR)
+			$(RM) -fr $(BUILDDIR)
 
 .PHONY:			distclean
 distclean:
@@ -589,10 +596,11 @@ translate:
 #
 # include a dependency file if one exists
 #
-#ifeq ($(DEPENDFILE),$(wildcard $(DEPENDFILE)))
+# ifeq ($(DEPENDFILE),$(wildcard $(DEPENDFILE)))
 #  include $(DEPENDFILE)
-#endif
+# endif
 
+-include $(DEPENDFILE)
 -include $(DEPENDS)
 
 #
