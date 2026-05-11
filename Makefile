@@ -1,5 +1,5 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
-# modifiziert Montag, 11. Mai 2026 10:27 von Leander Jedamus
+# modifiziert Montag, 11. Mai 2026 13:22 von Leander Jedamus
 # modifiziert Sonntag, 10. Mai 2026 22:17 von Leander Jedamus
 # modifiziert Donnerstag, 07. Mai 2026 16:46 von Leander Jedamus
 # modifiziert Mittwoch, 06. Mai 2026 18:49 von Leander Jedamus
@@ -463,7 +463,7 @@ cleanup:
 
 .PHONY:			firastrun
 firstrun:		$(PRAE_T)
-			@./create_depend.py $(BUILDDIR) $(PRAE_T)
+			@./create_depend.py $(BUILDDIR) $(DEPENDFILE) $(PRAE_T)
 			
 .PHONY:			debug
 debug:
