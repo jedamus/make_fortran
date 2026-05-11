@@ -1,5 +1,5 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
-# modifiziert Montag, 11. Mai 2026 07:15 von Leander Jedamus
+# modifiziert Montag, 11. Mai 2026 08:11 von Leander Jedamus
 # modifiziert Donnerstag, 07. Mai 2026 12:04 von Leander Jedamus
 # modifiziert Mittwoch, 06. Mai 2026 19:06 von Leander Jedamus
 # modifiziert Samstag, 18. April 2026 13:44 von Leander Jedamus
@@ -59,8 +59,10 @@ DEPEND.f.ol	= $(FC) -M $(strip $(DEFINES) -DIS_LIB $(MODFLAG))
 DEPEND.F.ol	= $(FC) -cpp -M $(strip $(DEFINES) -DIS_LIB $(MODFLAG))
 DEPEND.f.osl	= $(FC) -M $(strip $(DEFINES) -DIS_LIB $(MODFLAG))
 DEPEND.F.osl	= $(FC) -cpp -M $(strip $(DEFINES) -DIS_LIB $(MODFLAG))
-PRAE_T.f	= $(FC) -cpp -E $(strip $(DEFINES) -DIS_LIB
-PRAE_T.F	= $(FC) -cpp -E $(strip $(DEFINES) -DIS_LIB
+PRAE_T.f	= $(FC) -cpp -E $(strip $(DEFINES))
+PRAE_T.F	= $(FC) -cpp -E $(strip $(DEFINES))
+PRAE_T.f.lib	= $(FC) -cpp -E $(strip $(DEFINES) -DIS_LIB)
+PRAE_T.F.lib	= $(FC) -cpp -E $(strip $(DEFINES) -DIS_LIB)
 
 define compile.f
 $(RM) $@
@@ -149,6 +151,18 @@ define prae_t.F
 $(RM) $@
 @$(MKDIR) $(dir $@)
 $(PRAE_T.F) $<  > $@
+endef
+
+define prae_t.f.lib
+$(RM) $@
+@$(MKDIR) $(dir $@)
+$(PRAE_T.f.lib) $<  > $@
+endef
+
+define prae_t.F.lib
+$(RM) $@
+@$(MKDIR) $(dir $@)
+$(PRAE_T.F.lib) $<  > $@
 endef
 
 ifeq ($(link_switch),static)
@@ -487,55 +501,55 @@ $(BUILDDIR)/%.d:    $(SRCDIR)/%.F08
 # library praeprocessor output
 
 $(BUILDLIB)/%.t:    $(SRCLIB)/%.f
-		    $(prae_t.f)
+		    $(prae_t.f.lib)
 
 $(BUILDLIB)/%.t:    $(SRCLIB)/%.F
-		    $(prae_t.F)
+		    $(prae_t.F.lib)
 
 $(BUILDLIB)/%.t:    $(SRCLIB)/%.for
-		    $(prae_t.f)
+		    $(prae_t.f.lib)
 
 $(BUILDLIB)/%.t:    $(SRCLIB)/%.FOR
-		    $(prae_t.F)
+		    $(prae_t.F.lib)
 
 $(BUILDLIB)/%.t:    $(SRCLIB)/%.ftn
-		    $(prae_t.f)
+		    $(prae_t.f.lib)
 
 $(BUILDLIB)/%.t:    $(SRCLIB)/%.FTN
-		    $(prae_t.F)
+		    $(prae_t.F.lib)
 
 $(BUILDLIB)/%.t:    $(SRCLIB)/%.FPP
-		    $(prae_t.F)
+		    $(prae_t.F.lib)
 
 $(BUILDLIB)/%.t:    $(SRCLIB)/%.f77
-		    $(prae_t.f)
+		    $(prae_t.f.lib)
 
 $(BUILDLIB)/%.t:    $(SRCLIB)/%.F77
-		    $(prae_t.F)
+		    $(prae_t.F.lib)
 
 $(BUILDLIB)/%.t:    $(SRCLIB)/%.f90
-		    $(prae_t.f)
+		    $(prae_t.f.lib)
 
 $(BUILDLIB)/%.t:    $(SRCLIB)/%.F90
-		    $(prae_t.F)
+		    $(prae_t.F.lib)
 
 $(BUILDLIB)/%.t:    $(SRCLIB)/%.f95
-		    $(prae_t.f)
+		    $(prae_t.f.lib)
 
 $(BUILDLIB)/%.t:    $(SRCLIB)/%.F95
-		    $(prae_t.F)
+		    $(prae_t.F.lib)
 
 $(BUILDLIB)/%.t:    $(SRCLIB)/%.f03
-		    $(prae_t.f)
+		    $(prae_t.f.lib)
 
 $(BUILDLIB)/%.t:    $(SRCLIB)/%.F03
-		    $(prae_t.F)
+		    $(prae_t.F.lib)
 
 $(BUILDLIB)/%.t:    $(SRCLIB)/%.f08
-		    $(prae_t.f)
+		    $(prae_t.f.lib)
 
 $(BUILDLIB)/%.t:    $(SRCLIB)/%.F08
-		    $(prae_t.F)
+		    $(prae_t.F.lib)
 
 # normal praeprocessor output
 
