@@ -2,7 +2,7 @@
 # coding=utf-8 -*- python -*-
 
 # erzeugt Sonntag, 10. Mai 2026 20:48 (C) 2026 von Leander Jedamus
-# modifiziert Montag, 11. Mai 2026 13:21 von Leander Jedamus
+# modifiziert Montag, 11. Mai 2026 13:48 von Leander Jedamus
 # modifiziert Sonntag, 10. Mai 2026 22:16 von Leander Jedamus
 
 from __future__ import print_function
@@ -49,7 +49,7 @@ def register(builddir, filnam, regexp, regexp2):
     print(str)
 
   base_str = os.path.basename(filnam)
-  lst2 = base_str.rsplit('.')
+  lst2 = base_str.rsplit('.',1)
   if (len(lst2) == 1):
     print('Error: "', base_str, '" has no suffix', sep = '')
     return
@@ -177,10 +177,10 @@ def main():
           if s in d2.keys():
             found = True
             if is_first:
-              key2 = d2[key].rsplit(".")[-2]
+              key2 = d2[key].rsplit(".",1)[-2]
               out = '{key:s}.d:'.format(key = key2)
               is_first = False
-            s2 = d2[s].rsplit(".")[-2]
+            s2 = d2[s].rsplit(".",1)[-2]
             out += ' {s:s}.d'.format(s= s2)
           else:
             d4[s] = d3[s]
