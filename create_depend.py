@@ -2,6 +2,7 @@
 # coding=utf-8 -*- python -*-
 
 # erzeugt Sonntag, 10. Mai 2026 20:48 (C) 2026 von Leander Jedamus
+# modifiziert Montag, 11. Mai 2026 09:59 von Leander Jedamus
 # modifiziert Sonntag, 10. Mai 2026 22:16 von Leander Jedamus
 
 from __future__ import print_function
@@ -14,8 +15,8 @@ import separator as sep
 faktor = 10
 
 # path_sep = os.path.join(" ", "")[1]
-builddir = "build/linux"
-srcdir   = "src"
+# builddir = "build/linux"
+# srcdir   = "src"
 
 d  = {}
 d2 = {}
@@ -26,21 +27,21 @@ d4 = {}
 # d3: for module used from path and filename
 # d4: for unresolved module from path and filename
 
-debug = True
-info  = True
+debug = False
+info  = False
 
-def register(filnam, regexp):
+def register(builddir, filnam, regexp, regexp2):
   builddir2 = os.path.join(builddir, "")
-  srcdir2 = os.path.join(srcdir, "")
+  # srcdir2 = os.path.join(srcdir, "")
 
   if debug:
     print('File:      "', filnam, '"', sep = '')
-    print('srcdir   = "', srcdir2, '"', sep = '')
+    # print('srcdir   = "', srcdir2, '"', sep = '')
     print('builddir = "', builddir2, '"', sep = '')
 
-  lst = filnam.split(srcdir2)
+  lst = filnam.split(builddir2)
   if (len(lst) == 1):
-    print('Error: "', lst[0], '" is not in "{p:s}"'.format(p = srcdir), sep = '')
+    print('Error: "', lst[0], '" is not in "{p:s}"'.format(p = builddir), sep = '')
     return
 
   str = lst[1]
@@ -69,8 +70,18 @@ def register(filnam, regexp):
         if debug:
           print(zeile)
 
+        m2 = regexp2.match(zeile.lower())
         m = regexp.match(zeile.lower())
-        if (m != None):
+
+        treffer = False
+        if (m2 != None):
+          m = m2
+          treffer = True
+        else:
+          if(m != None):
+            treffer = True
+
+        if treffer:
           s = m.expand('\g<1>')
           if debug:
             print('Treffer: "', s, '"', sep = '')
@@ -88,6 +99,7 @@ def register(filnam, regexp):
             else:
               d[base_str] = [s]
 
+
     d2[base_str] = filnam
 
   except FileNotFoundError:
@@ -101,12 +113,28 @@ def main():
   if debug:
     print(sep.anfang(faktor))
   
-  regexp = re.compile(r"\s*use *([^\s,!]*).*", re.I)
+  regexp = re.compile(r"\s*use\s*([^\s,!]+).*", re.I)
+  regexp2 = re.compile(r"\s*use[, ]+intrinsic\s+::\s+([^\s,!]*).+", re.I)
+  # m = regexp2.match("USE, INTRINSIC :: iso_c_binding, only: c_char, c_null_char, c_null_ptr, c_ptr, c_int, &".lower())
+  # m = regexp.match("USE test, only: test2".lower())
+  # print(m.expand(r"\g<1>"))
 
-  register("build/linux/sleep/sleep.f90", regexp)
-  register("src/sleep/sleep", regexp)
-  register("src/lib/sleep/sleep.F90", regexp)
-  register("src/main.f90", regexp)
+  if (len(sys.argv) < 3):
+    print("usage: {argv:s} $(BUILDDIR) $(FILES.t)".format(argv=sys.argv[0]))
+    return
+
+  builddir = sys.argv[1]
+
+  for i in range(2, len(sys.argv)):
+    filename = sys.argv[i]
+    if debug:
+      print('Working on "{filename:s}"'.format(filename=filename))
+    register(builddir, filename, regexp, regexp2)
+
+  # register("build/linux/sleep/sleep.f90", regexp)
+  # register("src/sleep/sleep", regexp)
+  # register("src/lib/sleep/sleep.F90", regexp)
+  # register("src/main.f90", regexp)
 
   if debug:
     print('d  =', d)
