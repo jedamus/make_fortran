@@ -2,7 +2,7 @@
 # coding=utf-8 -*- python -*-
 
 # erzeugt Sonntag, 10. Mai 2026 20:48 (C) 2026 von Leander Jedamus
-# modifiziert Dienstag, 12. Mai 2026 06:08 von Leander Jedamus
+# modifiziert Dienstag, 12. Mai 2026 06:36 von Leander Jedamus
 # modifiziert Montag, 11. Mai 2026 15:55 von Leander Jedamus
 # modifiziert Sonntag, 10. Mai 2026 22:16 von Leander Jedamus
 
@@ -103,7 +103,8 @@ def register(builddir, filnam, regexp, regexp2):
 
 
   except FileNotFoundError:
-    print('Error: File "', filename, '" not found', sep = '')
+    if debug:
+      print('Error: File "', filename, '" not found', sep = '')
 
   if debug:
     print(sep.trenner(faktor))
