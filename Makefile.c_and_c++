@@ -1,0 +1,294 @@
+# erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
+# modifiziert Dienstag, 12. Mai 2026 07:59 von Leander Jedamus
+# modifiziert Montag, 30. September 2024 21:22 von Leander Jedamus
+# modifiziert Mittwoch, 04. September 2024 22:28 von Leander Jedamus
+# modifiziert Montag, 02. September 2024 23:10 von Leander Jedamus
+# modifiziert Sonntag, 01. September 2024 16:58 von Leander Jedamus
+# modifiziert Mittwoch, 15. November 2023 16:33 von Leander Jedamus
+# modifiziert Mittwoch, 16. August 2023 14:31 von Leander Jedamus
+# modifiziert Dienstag, 15. August 2023 07:53 von Leander Jedamus
+# modifiziert Freitag, 11. August 2023 05:16 von Leander Jedamus
+# modifiziert Mittwoch, 09. August 2023 15:11 von Leander Jedamus
+# modifiziert Dienstag, 08. August 2023 08:29 von Leander Jedamus
+# modifiziert Sonntag, 30. Juli 2023 18:43 von Leander Jedamus
+# modifiziert Donnerstag, 27. Juli 2023 16:15 von Leander Jedamus
+# modifiziert Mittwoch, 19. Juli 2023 17:34 von Leander Jedamus
+# modifiziert Montag, 17. Juli 2023 23:52 von Leander Jedamus
+
+ifeq ($(machtype),MacOS)
+  CC		:= clang
+  CXX		:= clang++
+else
+  CC		:= gcc
+  CXX		:= g++
+endif
+
+AR		:= ar
+RANLIB		:= ranlib
+LD		:= ld
+AS		:= as
+
+COPTS		= $(DFLAGS) $(CPPFLAGS) $(IFLAGS) $(TARGET_ARCH)
+COPTS		+= #-Wall
+LOPTS		= $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+C.c		= $(CC) $(strip $(CFLAGS) $(COPTS))
+C.cc		= $(CXX) $(strip $(CXXFLAGS) $(COPTS))
+COMPILE.c	= $(C.c) -c
+COMPILE.cc	= $(C.cc) -c
+LINK.c		= $(CC) $(strip $(CFLAGS) $(LOPTS))
+LINK.cc		= $(CXX) $(strip $(CXXFLAGS) $(LOPTS))
+DEPEND.c	= $(C.c) -MM
+DEPEND.cc	= $(C.cc) -MM
+
+define compile.c
+$(RM) $@
+$(strip $(COMPILE.c) $< $(OUTPUT_OPTION))
+endef
+
+define compile.cc
+$(RM) $@
+$(strip $(COMPILE.cc) $< $(OUTPUT_OPTION))
+endef
+
+define link.c
+$(RM) $@
+$(strip $(LINK.c) $(filter %.o,$^) $(LOADLIBES) -o $@ $(LDLIBS))
+endef
+
+define link.cc
+$(RM) $@
+$(strip $(LINK.cc) $(filter %.o,$^) $(LOADLIBES) -o $@ $(LDLIBS))
+endef
+
+define static_library
+$(RM) $@
+$(AR) $(ARFLAGS) $@ $^
+$(RANLIB) $@
+endef
+
+define library_compile.c
+$(RM) $@
+$(strip $(COMPILE.c) -fPIC $< $(OUTPUT_OPTION))
+endef
+
+define library_compile.cc
+$(RM) $@
+$(strip $(COMPILE.cc) -fPIC $< $(OUTPUT_OPTION))
+endef
+
+ifeq ($(machtype),MacOS)
+  define dynamic_library.ol
+    $(RM) $@
+    $(CC) -dynamiclib -install_name @rpath/$@ -o $@ $^
+  endef
+  define dynamic_library.osl
+    $(RM) $@
+    $(CXX) -dynamiclib -install_name @rpath/$@ -o $@ $^
+  endef
+else
+  define dynamic_library.ol
+    $(RM) $@
+    $(CC) -shared -o $@ $^
+  endef
+  define dynamic_library.osl
+    $(RM) $@
+    $(CXX) -shared -o $@ $^
+  endef
+endif
+
+define depend.c.ol
+  @echo "# generated $(DATETIME) by \"make\"" > $@
+  $(DEPEND.c) $< | sed -e 's/\.o:/.ol $@: Makefile Makefile.c_and_c++/' >> $@
+endef
+
+define depend.cc.ol
+  @echo "# generated $(DATETIME) by \"make\"" > $@
+  $(DEPEND.c) $< | sed -e 's/\.o:/.ol $@: Makefile Makefile.c_and_c++/' >> $@
+endef
+
+define depend.c.osl
+  @echo "# generated $(DATETIME) by \"make\"" > $@
+  $(DEPEND.c) $< | sed -e 's/\.o:/.osl $@: Makefile Makefile.c_and_c++/' >> $@
+endef
+
+define depend.cc.osl
+  @echo "# generated $(DATETIME) by \"make\"" > $@
+  $(DEPEND.c) $< | sed -e 's/\.o:/.osl $@: Makefile Makefile.c_and_c++/' >> $@
+endef
+
+define depend.c.o
+    @echo "# generated $(DATETIME) by \"make\"" > $@
+    $(DEPEND.c) $< | sed -e 's|\(.*\)\.o\([ :]*\)| $(dir $@)\1.o $@ \2|g' >> $@
+endef
+
+define depend.cc.o
+  @echo "# generated $(DATETIME) by \"make\"" > $@
+  $(DEPEND.cc) $< | sed -e 's/\.o:/.o $@: Makefile Makefile.c_and_c++/' >> $@
+endef
+
+define prae_t.c
+  cat $< > $@
+endef
+
+$(BUILDDIR)/%.o:    $(SRCDIR)/%.c
+		    $(compile.c)
+
+$(BUILDDIR)/%.t:    $(SRCDIR)/%.c
+		    $(prae_t.c)
+
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.c $(BUILDDIR)/%.o
+#		    @echo "making $@ from $<"
+		    $(depend.c.o)
+
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.c %.ol
+#		    @echo "making $@ from $<"
+		    $(depend.c.ol)
+
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.c %.osl
+#		    @echo "making $@ from $<"
+		    $(depend.c.osl)
+
+$(BUILDDIR)/%.o:    $(SRCDIR)/%.c++
+		    $(compile.cc)
+
+$(BUILDDIR)/%.ol:   $(SRCDIR)/%.c++
+		    $(compile.cc)
+
+$(BUILDDIR)/%.osl:  $(SRCDIR)/%.c++
+		    $(compile.cc)
+
+$(BUILDDIR)/%.o:    $(SRCDIR)/%.cpp
+		    $(compile.cc)
+
+$(BUILDDIR)/%.ol:   $(SRCDIR)/%.cpp
+		    $(compile.cc)
+
+$(BUILDDIR)/%.osl:  $(SRCDIR)/%.cpp
+		    $(compile.cc)
+
+$(BUILDDIR)/%.o:    $(SRCDIR)/%.cxx
+		    $(compile.cc)
+
+$(BUILDDIR)/%.ol:   $(SRCDIR)/%.cxx
+		    $(compile.cc)
+
+$(BUILDDIR)/%.osl:  $(SRCDIR)/%.cxx
+		    $(compile.cc)
+
+$(BUILDDIR)/%.o:    $(SRCDIR)/%.cc
+		    $(compile.cc)
+
+$(BUILDDIR)/%.ol:   $(SRCDIR)/%.cc
+		    $(compile.cc)
+
+$(BUILDDIR)/%.osl:  $(SRCDIR)/%.cc
+		    $(compile.cc)
+
+$(BUILDDIR)/%.o:    $(SRCDIR)/%.C
+		    $(compile.cc)
+
+$(BUILDDIR)/%.ol:   $(SRCDIR)/%.C
+		    $(compile.cc)
+
+$(BUILDDIR)/%.osl:  $(SRCDIR)/%.C
+		    $(compile.cc)
+
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.c++ $(BUILDDIR)/%.o
+#		    @echo "making $@ from $<"
+		    $(depend.cc.o) 
+
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.c++ $(BUILDDIR)/%.ol
+#		    @echo "making $@ from $<"
+		    $(depend.cc.ol) 
+
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.c++ $(BUILDDIR)/%.osl
+#		    @echo "making $@ from $<"
+		    $(depend.cc.osl) 
+
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.cpp $(BUILDDIR)/%.o
+#		    @echo "making $@ from $<"
+		    $(depend.cc.o) 
+
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.cpp $(BUILDDIR)/%.ol
+#		    @echo "making $@ from $<"
+		    $(depend.cc.ol) 
+
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.cpp $(BUILDDIR)/%.osl
+#		    @echo "making $@ from $<"
+		    $(depend.cc.osl) 
+
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.cxx $(BUILDDIR)/%.o
+#		    @echo "making $@ from $<"
+		    $(depend.cc.o) 
+
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.cxx $(BUILDDIR)/%.ol
+#		    @echo "making $@ from $<"
+		    $(depend.cc.ol) 
+
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.cxx $(BUILDDIR)/%.osl
+#		    @echo "making $@ from $<"
+		    $(depend.cc.osl) 
+
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.cc $(BUILDDIR)/%.o
+#		    @echo "making $@ from $<"
+		    $(depend.cc.o) 
+
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.cc $(BUILDDIR)/%.ol
+#		    @echo "making $@ from $<"
+		    $(depend.cc.ol) 
+
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.cc $(BUILDDIR)/%.osl
+#		    @echo "making $@ from $<"
+		    $(depend.cc.osl) 
+
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.C $(BUILDDIR)/%.o
+#		    @echo "making $@ from $<"
+		    $(depend.cc.o) 
+
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.C $(BUILDDIR)/%.ol
+#		    @echo "making $@ from $<"
+		    $(depend.cc.ol) 
+
+$(BUILDDIR)/%.d:    $(SRCDIR)/%.C $(BUILDDIR)/%.osl
+#		    @echo "making $@ from $<"
+		    $(depend.cc.osl) 
+
+# $(BUILDDIR)/%.d:  $(SRCDIR)/%.C
+# ifeq ($(link_switch),static)
+# 		@./depend.sh $@ "$(IS_IN_LIB)" "$(depend.cc.ol)" "$(depend.cc.o)"
+# else
+# 		@./depend.sh $@ "$(IS_IN_LIB)" "$(depend.cc.osl)" "$(depend.cc.o)"
+# endif
+
+%.osl:		%.c
+		$(library_compile.c)
+
+%.ol:		%.c
+		$(library_compile.c)
+
+%.so:		%.ol
+		$(dynamic_library.ol)
+
+%.so:		%.osl
+		$(dynamic_library.osl)
+
+%.ol:		%.cc
+		$(library_compile.cc)
+
+%.osl:		%.cc
+		$(library_compile.cc)
+
+%.osl:		%.c++
+		$(library_compile.cc)
+
+%.osl:		%.cpp
+		$(library_compile.cc)
+
+%.osl:		%.cxx
+		$(library_compile.cc)
+
+%.osl:		%.C
+		$(library_compile.cc)
+
+# vim:ai sw=2 noexpandtab
+
