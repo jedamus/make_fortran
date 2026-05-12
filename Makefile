@@ -1,5 +1,6 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
-# modifiziert Montag, 11. Mai 2026 13:22 von Leander Jedamus
+# modifiziert Dienstag, 12. Mai 2026 06:26 von Leander Jedamus
+# modifiziert Montag, 11. Mai 2026 15:56 von Leander Jedamus
 # modifiziert Sonntag, 10. Mai 2026 22:17 von Leander Jedamus
 # modifiziert Donnerstag, 07. Mai 2026 16:46 von Leander Jedamus
 # modifiziert Mittwoch, 06. Mai 2026 18:49 von Leander Jedamus
@@ -260,7 +261,7 @@ FILES			+= distclean.sh
 FILES			+= zip.sh
 FILES			+= create_project.sh
 FILES			+= create_version.sh
-FILES			+= create_depend.py separator.py
+FILES			+= create_depend.py reorder.py separator.py
 FILES			+= install_bin.sh install_lib.sh install_locale.sh
 FILES			+= bin_dist.sh
 FILES			+= Makefile.FORTRAN
@@ -379,8 +380,9 @@ LIB_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.ol,$(filter %.f,$(LIB_SOUR
 			  $(patsubst $(SRCDIR)/%.F03,$(BUILDDIR)/%.ol,$(filter %.F03,$(LIB_SOURCES)))  \
 			  $(patsubst $(SRCDIR)/%.f08,$(BUILDDIR)/%.ol,$(filter %.f08,$(LIB_SOURCES)))  \
 			  $(patsubst $(SRCDIR)/%.F08,$(BUILDDIR)/%.ol,$(filter %.F08,$(LIB_SOURCES)))
-DEPENDS			= $(MAIN_OBJECTS:.o=.d) $(LIB_OBJECTS:.ol=.d)
-PRAE_T			= $(DEPENDS:.d=.t)
+DEPENDS			= $(shell ./reorder.py $(BUILDDIR) $(LIB_OBJECTS) $(MAIN_OBJECTS))
+#DEPENDS			= $(LIB_OBJECTS:.ol=.d) $(MAIN_OBJECTS:.o=.d)
+PRAE_T			= $(LIB_OBJECTS:.ol=.t) $(MAIN_OBJECTS:.o=.t)
 else
 LIB_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.osl,$(filter %.f,$(LIB_SOURCES))) \
 			  $(patsubst $(SRCDIR)/%.F,$(BUILDDIR)/%.osl,$(filter %.F,$(LIB_SOURCES)))  \
@@ -399,8 +401,9 @@ LIB_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.osl,$(filter %.f,$(LIB_SOU
 			  $(patsubst $(SRCDIR)/%.F03,$(BUILDDIR)/%.osl,$(filter %.F03,$(LIB_SOURCES)))  \
 			  $(patsubst $(SRCDIR)/%.f08,$(BUILDDIR)/%.osl,$(filter %.f08,$(LIB_SOURCES)))  \
 			  $(patsubst $(SRCDIR)/%.F08,$(BUILDDIR)/%.osl,$(filter %.F08,$(LIB_SOURCES)))
-DEPENDS			= $(MAIN_OBJECTS:.o=.d) $(LIB_OBJECTS:.osl=.d)
-PRAE_T			= $(DEPENDS:.d=.t)
+DEPENDS			= $(shell ./reorder.py $(BUILDDIR) $(LIB_OBJECTS) $(MAIN_OBJECTS))
+#DEPENDS			= $(LIB_OBJECTS:.osl=.d) $(MAIN_OBJECTS:.o=.d)
+PRAE_T			= $(LIB_OBJECTS:.osl=.t) $(MAIN_OBJECTS:.o=.t)
 endif
 
 LIB_NAMES		= $(notdir $(wildcard $(SRCLIB)/*))
@@ -429,7 +432,7 @@ PROGRAMS		:= $(PROJECT_FILES) $(strip $(PROGRAM1) $(PROGRAM2))
 all:			$(PROJECT_FILES) createdirs $(PROGRAMS)
 			@echo done.
 
-$(PROGRAM1):		$(PRAE_T) $(MAIN_OBJECTS) $(LIB_OBJECTS) $(LIB_ARCHIVES)
+$(PROGRAM1):		$(PRAE_T) $(LIB_OBJECTS) $(MAIN_OBJECTS) $(LIB_ARCHIVES)
 			$(FC) $(strip $(FFLAGS) $(FINCLUDES) -o $@ $(MAIN_OBJECTS) $(BUILDDIR)/c_helper.o $(LDFLAGS))
 
 $(foreach lib,$(LIB_NAMES),$(eval $(call create-lib-rule,$(lib))))
@@ -463,7 +466,7 @@ cleanup:
 
 .PHONY:			firastrun
 firstrun:		$(PRAE_T)
-			@./create_depend.py $(BUILDDIR) $(DEPENDFILE) $(PRAE_T)
+			./reorder.py $(BUILDDIR) $(LIB_OBJECTS) $(MAIN_OBJECTS)
 			
 .PHONY:			debug
 debug:
@@ -486,6 +489,7 @@ debug:
 			@echo "$$""(LIB_SOURCES)=$(strip $(LIB_SOURCES))"
 			@echo "$$""(MAIN_OBJECTS)=$(strip $(MAIN_OBJECTS))"
 			@echo "$$""(LIB_OBJECTS)=$(strip $(LIB_OBJECTS))"
+			@echo "$$""(PRAE_T)=$(strip $(PRAE_T))"
 			@echo "$$""(DEPENDS)=$(strip $(DEPENDS))"
 			@echo "$$""(LIB_NAMES)=$(strip $(LIB_NAMES))"
 			@echo "$$""(LIB_ARCHIVES)=$(strip $(LIB_ARCHIVES))"
@@ -566,7 +570,8 @@ $(PROJECT_F90):		project.txt version.txt updated.txt author.txt author_email.txt
 create_project:		$(PROJECT_F90)
 
 .PHONY:			depend
-depend:			$(DEPENDS)
+#depend:			$(DEPENDS)
+
 #depend:
 #			echo "# automatically created" \
 #			     "$(DATETIME)" \
@@ -601,7 +606,7 @@ translate:
 # endif
 
 -include $(DEPENDFILE)
-# -include $(DEPENDS)
+-include $(DEPENDS)
 
 #
 # include dependency files if exists
