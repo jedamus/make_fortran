@@ -1,5 +1,5 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
-# modifiziert Dienstag, 12. Mai 2026 07:37 von Leander Jedamus
+# modifiziert Dienstag, 12. Mai 2026 09:10 von Leander Jedamus
 # modifiziert Montag, 11. Mai 2026 15:56 von Leander Jedamus
 # modifiziert Sonntag, 10. Mai 2026 22:17 von Leander Jedamus
 # modifiziert Donnerstag, 07. Mai 2026 16:46 von Leander Jedamus
@@ -76,7 +76,7 @@ PLATFORM		?= linux
 debug_switch		:= true# false
 
 # set link_switch to shared, if there is at least one shared library:
-link_switch		:= static# shared
+link_switch		:= shared# static# shared
 
 DEPENDFILE		:= $(BUILDDIR).depend
 PRINTFILE		:= .print
@@ -329,7 +329,6 @@ else ifeq ($(UNAME_M),aarch64)
 endif
 
 DEFINES			= $(PLATFORM_DEFINES) $(ARCH_DEFINES)
-FFLAGS	    		+= $(DEFINES)
 
 MODFLAG			= -J $(MODDIR)
 FINCLUDES		= -I $(BUILDDIR) -I $(SRCDIR) -I $(MODDIR) $(addprefix -I ,$(wildcard $(SRCLIB)/*))
@@ -438,9 +437,9 @@ all:			$(PROJECT_FILES) createdirs $(PROGRAMS)
 			@echo done.
 
 $(PROGRAM1):		$(PRAE_T) $(LIB_OBJECTS) $(MAIN_OBJECTS) $(C_OBJECTS) $(LIB_ARCHIVES)
-			$(FC) $(strip $(FFLAGS) $(FINCLUDES) -o $@ $(MAIN_OBJECTS) $(C_OBJECTS) $(LDFLAGS))
+			$(FC) $(strip $(FFLAGS) -o $@ $(MAIN_OBJECTS) $(C_OBJECTS) $(LDFLAGS))
 
-$(foreach lib,$(LIB_NAMES),$(eval $(call create-lib-rule,$(lib))))
+$(foreach lib,$(LIB_NAMES),$(eval $(call create-library-rule,$(lib))))
 
 .PHONY:			install
 install:		$(PROJECT_FILES) $(PROGRAMS)

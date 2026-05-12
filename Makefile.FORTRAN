@@ -1,5 +1,5 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
-# modifiziert Dienstag, 12. Mai 2026 08:10 von Leander Jedamus
+# modifiziert Dienstag, 12. Mai 2026 09:10 von Leander Jedamus
 # modifiziert Montag, 11. Mai 2026 08:11 von Leander Jedamus
 # modifiziert Donnerstag, 07. Mai 2026 12:04 von Leander Jedamus
 # modifiziert Mittwoch, 06. Mai 2026 19:06 von Leander Jedamus
@@ -47,10 +47,10 @@ AS		:= as
 
 COMPILE.f	= $(FC) $(strip $(FFLAGS) $(DEFINES) $(MODFLAG) $(FINCLUDES) $(TARGET_ARCH)) -c
 COMPILE.F	= $(FC) -cpp $(strip $(FFLAGS) $(DEFINES) $(MODFLAG) $(FINCLUDES) $(TARGET_ARCH)) -c
-COMPILE_STATIC.f = $(FC) $(strip $(FFLAGS) -DIS_LIB $(MODFLAG) $(FINCLUDES) $(TARGET_ARCH)) -c
-COMPILE_STATIC.F = $(FC) -cpp $(strip $(FFLAGS) -DIS_LIB $(MODFLAG) $(FINCLUDES) $(TARGET_ARCH)) -c
-COMPILE_SHARED.f = $(FC) -fPIC $(strip $(FFLAGS) -DIS_LIB $(MODFLAG) $(FINCLUDES) $(TARGET_ARCH)) -c
-COMPILE_SHARED.F = $(FC) -fPIC -cpp $(strip $(FFLAGS) -DIS_LIB $(MODFLAG) $(FINCLUDES) $(TARGET_ARCH)) -c
+COMPILE_STATIC.f = $(FC) $(strip $(FFLAGS) $(DEFINES) -DIS_LIB $(MODFLAG) $(FINCLUDES) $(TARGET_ARCH)) -c
+COMPILE_STATIC.F = $(FC) -cpp $(strip $(FFLAGS) $(DEFINES) -DIS_LIB $(MODFLAG) $(FINCLUDES) $(TARGET_ARCH)) -c
+COMPILE_SHARED.f = $(FC) -fPIC $(strip $(FFLAGS) $(DEFINES) -DIS_LIB $(MODFLAG) $(FINCLUDES) $(TARGET_ARCH)) -c
+COMPILE_SHARED.F = $(FC) -fPIC -cpp $(strip $(FFLAGS) $(DEFINES) -DIS_LIB $(MODFLAG) $(FINCLUDES) $(TARGET_ARCH)) -c
 LINK_SHARED_LIB = $(FC) -shared $(strip $(FFLAGS) $(MODFLAG) $(FINCLUDES) $(TARGET_ARCH))
 DEPEND.f.o	= $(FC) -M $(strip $(DEFINES) $(MODFLAG))
 #DEPEND.f.o	= $(FC) -M $(strip $(DEFINES) $(MODFLAG) $(FINCLUDES))
@@ -167,14 +167,14 @@ $(PRAE_T.F.lib) $<  > $@
 endef
 
 ifeq ($(link_switch),static)
-define create-lib-rule
+define create-library-rule
 $$(BUILDLIB)/lib$(1).a: $$(wildcard $$(BUILDLIB)/$(1)/*.ol)
 	$$(AR) rcs $$@ $$^
 	$$(RANLIB) $$@
 
 endef
 else
-define create-lib-rule
+define create-library-rule
 $$(BUILDLIB)/lib$(1).so: $$(wildcard $$(BUILDLIB)/$(1)/*.osl)
 	$$(create-shared-lib)
 
