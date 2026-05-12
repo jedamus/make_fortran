@@ -2,7 +2,7 @@
 # coding=utf-8 -*- python -*-
 
 # erzeugt Sonntag, 10. Mai 2026 20:48 (C) 2026 von Leander Jedamus
-# modifiziert Montag, 11. Mai 2026 13:48 von Leander Jedamus
+# modifiziert Montag, 11. Mai 2026 14:48 von Leander Jedamus
 # modifiziert Sonntag, 10. Mai 2026 22:16 von Leander Jedamus
 
 from __future__ import print_function
@@ -120,7 +120,7 @@ def main():
   # print(m.expand(r"\g<1>"))
 
   if (len(sys.argv) < 4):
-    print("usage: {argv:s} $(BUILDDIR) $(FILES.t)".format(argv=sys.argv[0]))
+    print("usage: {argv:s} $(BUILDDIR) $(DEPENDFILE) $(FILES.t)".format(argv=sys.argv[0]))
     return
 
   builddir = sys.argv[1]
