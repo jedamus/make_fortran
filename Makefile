@@ -1,5 +1,5 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
-# modifiziert Dienstag, 12. Mai 2026 06:26 von Leander Jedamus
+# modifiziert Dienstag, 12. Mai 2026 07:37 von Leander Jedamus
 # modifiziert Montag, 11. Mai 2026 15:56 von Leander Jedamus
 # modifiziert Sonntag, 10. Mai 2026 22:17 von Leander Jedamus
 # modifiziert Donnerstag, 07. Mai 2026 16:46 von Leander Jedamus
@@ -133,7 +133,7 @@ MODDIR			= $(BUILDDIR)/mod
 SRCLIB			= $(SRCDIR)/lib
 BUILDLIB		= $(BUILDDIR)/lib
 
-#include Makefile.c_and_c++
+include Makefile.c_and_c++
 #include Makefile.cobol
 #include Makefile.cweb_and_noweb
 #include Makefile.documentation
@@ -339,7 +339,7 @@ ALL_SOURCES		= $(shell $(FIND) $(SRCDIR) -type f \( -name "*.f" -o -name "*.F" \
 			  -o -name "*.for" -o -name "*.FOR" -o -name "*.ftn" -o -name "*.FTN" \
 			  -o -name "*.FPP" -o -name "*.f77" -o -name "*.F77" -o -name "*.f90" \
 			  -o -name "*.F90" -o -name "*.f95" -o -name "*.F95" -o -name "*.f03" \
-			  -o -name "*.F03" -o -name "*.f08" -o -name "*.F08" \) )
+			  -o -name "*.F03" -o -name "*.f08" -o -name "*.F08" -o -name "*.c" \) )
 
 MAIN_SOURCES		= $(filter-out $(SRCLIB)/%,$(ALL_SOURCES))
 LIB_SOURCES		= $(filter $(SRCLIB)/%,$(ALL_SOURCES))
@@ -360,7 +360,8 @@ MAIN_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.o,$(filter %.f,$(MAIN_SOU
 			  $(patsubst $(SRCDIR)/%.f03,$(BUILDDIR)/%.o,$(filter %.f03,$(MAIN_SOURCES)))  \
 			  $(patsubst $(SRCDIR)/%.F03,$(BUILDDIR)/%.o,$(filter %.F03,$(MAIN_SOURCES)))  \
 			  $(patsubst $(SRCDIR)/%.f08,$(BUILDDIR)/%.o,$(filter %.f08,$(MAIN_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.F08,$(BUILDDIR)/%.o,$(filter %.F08,$(MAIN_SOURCES)))
+			  $(patsubst $(SRCDIR)/%.F08,$(BUILDDIR)/%.o,$(filter %.F08,$(MAIN_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.c,$(BUILDDIR)/%.o,$(filter %.c,$(MAIN_SOURCES)))
 
 ifeq  ($(link_switch),static)
 LIB_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.ol,$(filter %.f,$(LIB_SOURCES))) \
@@ -379,7 +380,8 @@ LIB_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.ol,$(filter %.f,$(LIB_SOUR
 			  $(patsubst $(SRCDIR)/%.f03,$(BUILDDIR)/%.ol,$(filter %.f03,$(LIB_SOURCES)))  \
 			  $(patsubst $(SRCDIR)/%.F03,$(BUILDDIR)/%.ol,$(filter %.F03,$(LIB_SOURCES)))  \
 			  $(patsubst $(SRCDIR)/%.f08,$(BUILDDIR)/%.ol,$(filter %.f08,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.F08,$(BUILDDIR)/%.ol,$(filter %.F08,$(LIB_SOURCES)))
+			  $(patsubst $(SRCDIR)/%.F08,$(BUILDDIR)/%.ol,$(filter %.F08,$(LIB_SOURCES)))  \
+			  $(patsubst $(SRCDIR)/%.c,$(BUILDDIR)/%.ol,$(filter %.c,$(LIB_SOURCES)))
 DEPENDS			= $(shell ./reorder.py $(BUILDDIR) $(LIB_OBJECTS) $(MAIN_OBJECTS))
 #DEPENDS			= $(LIB_OBJECTS:.ol=.d) $(MAIN_OBJECTS:.o=.d)
 PRAE_T			= $(LIB_OBJECTS:.ol=.t) $(MAIN_OBJECTS:.o=.t)
@@ -400,11 +402,14 @@ LIB_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.osl,$(filter %.f,$(LIB_SOU
 			  $(patsubst $(SRCDIR)/%.f03,$(BUILDDIR)/%.osl,$(filter %.f03,$(LIB_SOURCES)))  \
 			  $(patsubst $(SRCDIR)/%.F03,$(BUILDDIR)/%.osl,$(filter %.F03,$(LIB_SOURCES)))  \
 			  $(patsubst $(SRCDIR)/%.f08,$(BUILDDIR)/%.osl,$(filter %.f08,$(LIB_SOURCES)))  \
-			  $(patsubst $(SRCDIR)/%.F08,$(BUILDDIR)/%.osl,$(filter %.F08,$(LIB_SOURCES)))
+			  $(patsubst $(SRCDIR)/%.F08,$(BUILDDIR)/%.osl,$(filter %.F08,$(LIB_SOURCES))) 
 DEPENDS			= $(shell ./reorder.py $(BUILDDIR) $(LIB_OBJECTS) $(MAIN_OBJECTS))
 #DEPENDS			= $(LIB_OBJECTS:.osl=.d) $(MAIN_OBJECTS:.o=.d)
 PRAE_T			= $(LIB_OBJECTS:.osl=.t) $(MAIN_OBJECTS:.o=.t)
 endif
+CSOURCES		= $(shell $(FIND) $(SRCDIR) -type f \( -name "*.c" \) ) 
+COBJECTS		= $(patsubst $(SRCDIR)/%.c,$(BUILDDIR)/%.o,$(filter %.c,$(CSOURCES))) 
+
 
 LIB_NAMES		= $(notdir $(wildcard $(SRCLIB)/*))
 ifeq ($(link_switch),static)
@@ -432,8 +437,8 @@ PROGRAMS		:= $(PROJECT_FILES) $(strip $(PROGRAM1) $(PROGRAM2))
 all:			$(PROJECT_FILES) createdirs $(PROGRAMS)
 			@echo done.
 
-$(PROGRAM1):		$(PRAE_T) $(LIB_OBJECTS) $(MAIN_OBJECTS) $(LIB_ARCHIVES)
-			$(FC) $(strip $(FFLAGS) $(FINCLUDES) -o $@ $(MAIN_OBJECTS) $(BUILDDIR)/c_helper.o $(LDFLAGS))
+$(PROGRAM1):		$(PRAE_T) $(LIB_OBJECTS) $(MAIN_OBJECTS) $(C_OBJECTS) $(LIB_ARCHIVES)
+			$(FC) $(strip $(FFLAGS) $(FINCLUDES) -o $@ $(MAIN_OBJECTS) $(C_OBJECTS) $(LDFLAGS))
 
 $(foreach lib,$(LIB_NAMES),$(eval $(call create-lib-rule,$(lib))))
 
@@ -502,6 +507,8 @@ debug:
 			@echo "$$""(LDFLAGS)=$(strip $(LDFLAGS))"
 			@echo "$$""(WORKDIR)=$(strip $(WORKDIR))"
 			@echo "$$""(MODDIR)=$(strip $(MODDIR))"
+			@echo "$$""(CSOURCES)=$(strip $(CSOURCES))"
+			@echo "$$""(COBJECTS)=$(strip $(COBJECTS))"
 
 .PHONY:			debugger
 debugger:		$(PROGRAM1)
