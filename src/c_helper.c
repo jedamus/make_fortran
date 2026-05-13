@@ -1,7 +1,7 @@
 /* -*- C -*- */
 /* c_helper.c */
 /* erzeugt Donnerstag, 07. Mai 2026 16:42 (C) 2026 von Leander Jedamus */
-/* modifiziert Mittwoch, 13. Mai 2026 07:07 von Leander Jedamus */
+/* modifiziert Mittwoch, 13. Mai 2026 16:01 von Leander Jedamus */
 /* modifiziert Dienstag, 12. Mai 2026 14:35 von Leander Jedamus */
 /* modifiziert Donnerstag, 07. Mai 2026 16:45 von Leander Jedamus */
 
@@ -13,19 +13,23 @@
 #include "c_helper.h"
 
 void fortran_bindtextdomain(const char *domain, const char *dir) {
-  fprintf(stderr, "DEBUG bindtextdomain(domain='%s', dir='%s')\n", domain, dir);
+  if (DEBUG) {
+    fprintf(stderr, "DEBUG bindtextdomain(domain='%s', dir='%s')\n", domain, dir);
+  }
   bindtextdomain(domain, dir);
 }
 
 void fortran_textdomain(const char *domain) {
-  fprintf(stderr, "DEBUG textdomain(domain='%s')\n", domain);
+  if (DEBUG) {
+    fprintf(stderr, "DEBUG textdomain(domain='%s')\n", domain);
+  }
   textdomain(domain);
 }
 
 void fortran_gettext(const char *msgid, char *result, int max_len) {
   /*
   static int init = 0;
-  if(!init) {
+  if (!init) {
     bindtextdomain("make_fortran", "/home/leander/Projekte/new/fortran/make_fortran/locale");
     textdomain("make_fortran");
     init = 1;
@@ -34,7 +38,9 @@ void fortran_gettext(const char *msgid, char *result, int max_len) {
 
   const char *trans = gettext(msgid);
 
-  fprintf(stderr, "DEBUG gettext('%s') = '%s'\n", msgid, trans ? trans : "(null)");
+  if (DEBUG) {
+    fprintf(stderr, "DEBUG gettext('%s') = '%s'\n", msgid, trans ? trans : "(null)");
+  }
 
   if (trans) {
     strncpy(result, trans, max_len - 1);
@@ -59,7 +65,9 @@ void fortran_setlocale() {
   setenv("LANGUAGE", "de", 1);
 
   char *result = setlocale(LC_ALL, "");
-  fprintf(stderr, "DEBUG setlocale() returned: %s\n", result ? result : "(null)");
+  if (DEBUG) {
+    fprintf(stderr, "DEBUG setlocale() returned: %s\n", result ? result : "(null)");
+  }
 }
 
 void string_from_c(const char *c_str, char *f_str, int max_len) {
@@ -73,11 +81,13 @@ void string_from_c(const char *c_str, char *f_str, int max_len) {
 
 void fortran_dgettext(const char *domain, const char *msgid, char *result, int max_len) {
 
-  fprintf(stderr, "DEBUG dgettext(domain='%s',msgid ='%s' hex=", domain, msgid);
-  const unsigned char *p;
-  for (p = (const unsigned char *) msgid; *p; p++)
-    fprintf(stderr, " %02x", *p);
-  fprintf(stderr, "\n");
+  if (DEBUG) {
+    fprintf(stderr, "DEBUG dgettext(domain='%s',msgid ='%s' hex=", domain, msgid);
+    const unsigned char *p;
+    for (p = (const unsigned char *) msgid; *p; p++)
+      fprintf(stderr, " %02x", *p);
+    fprintf(stderr, "\n");
+  }
 
   const char *trans = dgettext(domain, msgid);
 
