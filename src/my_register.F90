@@ -3,11 +3,6 @@
 
 #define DOMAIN "make_fortran"
 #define PFAD "/home/leander/Projekte/new/fortran/make_fortran/locale"
-#ifdef IS_LIB
-#define _ (msgid) dgettext (DOMAIN, msgid)
-#else
-#define _ (msgid) gettext (msgid)
-#endif
        
 MODULE my_register
 
