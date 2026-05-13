@@ -1,0 +1,39 @@
+! erzeugt Dienstag, 12. Mai 2026 11:12 (C) 2026 von Leander Jedamus
+! modifiziert Dienstag, 12. Mai 2026 11:23 von Leander Jedamus
+
+#define DOMAIN "make_fortran"
+#define PFAD "/home/leander/Projekte/new/fortran/make_fortran/locale"
+#ifdef IS_LIB
+#define _(msgid) dgettext (DOMAIN, msgid)
+#else
+#define _(msgid) gettext (msgid)
+#endif
+       
+MODULE my_register
+
+  USE mod_gettext
+  USE my_register_libsleep
+  USE my_register_liboutput
+
+  IMPLICIT NONE
+  PRIVATE
+
+  PUBLIC :: register
+
+  CONTAINS
+
+  SUBROUTINE register()
+    IMPLICIT NONE
+
+    CALL setlocale()
+    CALL bindtextdomain(DOMAIN, PFAD)
+    CALL textdomain(DOMAIN)
+
+    CALL register_lib_sleep(PFAD)
+    CALL register_lib_output(PFAD)
+  END SUBROUTINE register
+
+END MODULE my_register
+       
+! vim:ai sw=4 expandtab
+

@@ -1,6 +1,15 @@
 ! erzeugt Samstag, 18. April 2026 07:04 (C) 2026 von Leander Jedamus
+! modifiziert Dienstag, 12. Mai 2026 14:00 von Leander Jedamus
 ! modifiziert Donnerstag, 07. Mai 2026 06:50 von Leander Jedamus
 ! modifiziert Samstag, 18. April 2026 09:17 von Leander Jedamus
+
+#define DOMAIN "make_fortran"
+
+#ifdef IS_LIB
+#define _(msgid) dgettext (DOMAIN, msgid)
+#else
+#define _(msgid) gettext (msgid)
+#endif
        
 PROGRAM main
 
@@ -8,14 +17,25 @@ PROGRAM main
   USE compiler_flags
   use mod_platform
   use sleep
+  use mod_gettext
+  use my_register
+  USE check
+!  use test_me
 
   IMPLICIT NONE
+  ! CHARACTER (LEN=*), PARAMETER :: domain = DOMAIN
+
+  CALL register()
+ 
+  WRITE(*,*) "main:"
+  WRITE(*,*) _("Main program started")
+
+  CALL my_check()
 
   CALL greet
   WRITE(*,*) ""
 
   CALL print_compiler_flags
-
   WRITE(*,*) ""
 
   WRITE(*,*) "Betriebssystem : ", get_os_name()

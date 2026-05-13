@@ -1,0 +1,112 @@
+! erzeugt Donnerstag, 07. Mai 2026 15:20 (C) 2026 von Leander Jedamus
+! modifiziert Dienstag, 12. Mai 2026 12:42 von Leander Jedamus
+! modifiziert Donnerstag, 07. Mai 2026 17:02 von Leander Jedamus
+       
+MODULE mod_gettext
+
+  USE, INTRINSIC :: iso_c_binding, only: c_char, c_null_char, c_int, c_long
+
+  IMPLICIT NONE
+  PRIVATE
+
+  PUBLIC :: bindtextdomain, textdomain, gettext, ngettext
+
+  INTERFACE
+
+    ! bindtextdomain(domainname, dirname)
+    SUBROUTINE fortran_bindtextdomain(domain, dir) bind(C, name="fortran_bindtextdomain")
+      IMPORT :: c_char
+      CHARACTER(KIND=c_char), DIMENSION(*), INTENT(IN) :: domain, dir
+    END SUBROUTINE fortran_bindtextdomain
+
+    ! textdomain(domainname)
+    SUBROUTINE fortran_textdomain(domain) bind(C, name="fortran_textdomain")
+        IMPORT :: c_char
+        CHARACTER(kind=c_char), DIMENSION(*), INTENT(IN) :: domain
+    END SUBROUTINE fortran_textdomain
+
+    ! gettext(msgid)
+    SUBROUTINE fortran_gettext(msgid, result, max_len) bind(C, name="fortran_gettext")
+      IMPORT :: c_char, c_int
+      CHARACTER(KIND=c_char), DIMENSION(*), INTENT(IN) :: msgid
+      CHARACTER(KIND=c_char), DIMENSION(*), INTENT(OUT) :: result
+      INTEGER(KIND=c_int), VALUe, INTENT(IN) :: max_len
+    END SUBROUTINE fortran_gettext
+
+    ! ngettext(msgid, msgid_plural, n)
+    SUBROUTINE fortran_ngettext(msgid, msgid_plural, n, result, max_len) bind(C, name="fortran_ngettext")
+      IMPORT :: c_char, c_int, c_long
+      CHARACTER(KIND=c_char), DIMENSION(*), INTENT(IN) :: msgid, msgid_plural
+      INTEGER(KIND=c_long), VALUE, INTENT(IN) :: n
+      CHARACTER(KIND=c_char), DIMENSION(*), INTENT(OUT) :: result
+      INTEGER(KIND=c_int), VALUE, INTENT(IN) :: max_len
+    END SUBROUTINE fortran_ngettext
+
+  END INTERFACE
+
+  CONTAINS
+
+    SUBROUTINE bindtextdomain(domain, dir)
+      CHARACTER(len=*), INTENT(IN) :: domain, dir
+
+      CALL fortran_bindtextdomain(domain // c_null_char, dir // c_null_char)
+    END SUBROUTINE bindtextdomain
+
+    SUBROUTINE textdomain(domain)
+      CHARACTER(len=*), INTENT(IN) :: domain
+      call fortran_textdomain(domain // c_null_char)
+    END SUBROUTINE textdomain
+
+    FUNCTION gettext(msgid) RESULT(translation)
+      CHARACTER(len=*), INTENT(IN) :: msgid
+      CHARACTER(len=:), ALLOCATABLE :: translation
+      INTEGER :: i, length, maxlen
+      CHARACTER(KIND=c_char, len=:), ALLOCATABLE :: buffer(:)
+      CHARACTER(KIND=c_char), ALLOCATABLE :: temp(:)
+
+      maxlen = 4096
+      ALLOCATE(buffer(maxlen))
+      CALL fortran_gettext(msgid // c_null_char, buffer, maxlen)
+
+      length = 0
+      DO i = 1, maxlen
+        IF (temp(i) == c_null_char) EXIT
+        length = length + 1
+      END DO
+
+      ALLOCATE(CHARACTER(len=length) :: translation)
+      DO i = 1, length
+        translation(i:i) = buffer(i)
+      END DO
+      DEALLOCATE(buffer)
+    END FUNCTION gettext
+
+    FUNCTION ngettext(msgid, msgid_plural, n) RESULT(translation)
+      CHARACTER(len=*), INTENT(IN) :: msgid, msgid_plural
+      INTEGER, INTENT(IN) :: n
+      CHARACTER(len=:), ALLOCATABLE :: translation
+      INTEGER :: i, length, maxlen
+      CHARACTER(kind=c_char), ALLOCATABLE :: buffer(:)
+
+      maxlen = 4096
+      ALLOCATE(buffer(maxlen))
+      CALL fortran_ngettext(msgid // c_null_char, msgid_plural // c_null_char, &
+             int(n, c_long), buffer, maxlen)
+
+      length = 0
+      DO i = 1, maxlen
+        IF (buffer(i) == c_null_char) EXIT
+        length = length + 1
+      END DO
+
+      ALLOCATE(CHARACTER(len=length) :: translation)
+      DO i = 1, length
+        translation(i:i) = buffer(i)
+      END DO
+      DEALLOCATE(buffer)
+    END FUNCTION ngettext
+
+END MODULE mod_gettext
+       
+! vim:ai sw=4 expandtab
+

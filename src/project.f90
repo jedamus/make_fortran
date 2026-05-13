@@ -1,13 +1,15 @@
 ! project.f90 
-! erzeugt Donnerstag, 07. Mai 2026 14:16 (C) 2026 von Leander Jedamus
-! modifiziert Donnerstag, 07. Mai 2026 14:16 von Leander Jedamus
+! erzeugt Dienstag, 12. Mai 2026 14:14 (C) 2026 von Leander Jedamus
+! modifiziert Dienstag, 12. Mai 2026 14:14 von Leander Jedamus
 
 MODULE project
 
   IMPLICIT NONE
   PRIVATE
 
-  PUBLIC :: greet
+  PUBLIC :: greet, my_project
+
+  CHARACTER(len=*), PARAMETER :: my_project = "make_fortran"
 
   CONTAINS
 
