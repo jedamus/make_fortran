@@ -1,0 +1,78 @@
+#!/usr/bin/env sh
+
+# erzeugt Mittwoch, 13. Mai 2026 12:38 (C) 2026 von Leander Jedamus
+# modifiziert Mittwoch, 13. Mai 2026 14:16 von Leander Jedamus
+
+usage() {
+  echo "usage: $0 translate <project> <lib1> <lib2>"
+  exit 0
+}
+
+create() {
+  translate=$1
+  shift
+  my_project=$1
+
+  shift
+  tmpfile=$(mktemp)
+  is_first=1
+  for file in $*; do
+    grep "_(" $file > $tmpfile
+    if [ -s $tmpfile ]; then
+      if [ $is_first = 1 ]; then
+        echo -n "${translate}.pl " >> ${translate}.sh
+	is_first=0
+      fi
+      echo -n "--file $file " >> ${translate}.sh
+    fi
+  done
+  if [ $is_first != 1 ]; then
+    echo "--project=$my_project --version=\$(cat version.txt)" >> ${translate}.sh
+  fi
+  rm $tmpfile
+}
+
+if [ -z $1 ]; then
+  usage
+fi
+
+translate=$1
+shift
+project=$1
+shift
+libs=$*
+
+files=$(find src/ -maxdepth 2 -type f \( -name "*.F" -o -name "*.FOR" -o -name "*.FTN" -o -name "*.FPP" \
+             -o -name "*.F77" -o -name "*.F90" -o -name "*.F95" -o -name "*.F03" -o -name "*.F08" \) )
+
+cat << EOF > ${translate}.sh
+#!/usr/bin/env sh
+
+# erzeugt Montag, 14. August 2023 07:05 (C) 2023 von Leander Jedamus
+# modifiziert Dienstag, 12. Mai 2026 13:58 von Leander Jedamus
+
+# set -x
+
+EOF
+
+create $translate $project $files
+
+# translate.pl --file=src/main.F90 --project=$(cat project.txt) --version=$(cat version.txt)
+
+for lib in $libs; do
+  libfiles=$(find src/lib/$lib -type f \( -name "*.F" -o -name "*.FOR" -o -name "*.FTN" -o -name "*.FPP" \
+               -o -name "*.F77" -o -name "*.F90" -o -name "*.F95" -o -name "*.F03" -o -name "*.F08" \) )
+  # echo $libfiles
+  create $translate ${project}_lib$lib $libfiles
+done
+
+cat << EOF >> ${translate}.sh
+
+# vim:ai sw=2
+
+EOF
+
+chmod +x ${translate}.sh
+
+# vim:ai sw=2
+
