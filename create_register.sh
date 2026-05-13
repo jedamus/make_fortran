@@ -1,12 +1,12 @@
 #!/usr/bin/env sh
 
 # erzeugt Mittwoch, 13. Mai 2026 11:19 (C) 2026 von Leander Jedamus
-# modifiziert Mittwoch, 13. Mai 2026 14:11 von Leander Jedamus
+# modifiziert Mittwoch, 13. Mai 2026 15:44 von Leander Jedamus
 
 # set -x
 
 if [ -z $1 ]; then
-  echo "usage: $0 <SRCDIR> <domain> <pfad> <filename> <libname1> <libname2> ..."
+  echo "usage: $0 <SRCDIR> <domain> <pfad> <my_register> <libname1> <libname2> ..."
   exit 1
 fi
 
@@ -16,10 +16,10 @@ domain=$1
 shift
 pfad=$1
 shift
-filename=$1
+my_register=$1
 shift
 
-filename1="$srcdir/$filename.F90"
+filename1="$srcdir/${my_register}.F90"
 
 cat << EOF > $filename1
 ! erzeugt Dienstag, 12. Mai 2026 11:12 (C) 2026 von Leander Jedamus
@@ -27,19 +27,14 @@ cat << EOF > $filename1
 
 #define DOMAIN "$domain"
 #define PFAD "$pfad"
-#ifdef IS_LIB
-#define _ (msgid) dgettext (DOMAIN, msgid)
-#else
-#define _ (msgid) gettext (msgid)
-#endif
        
-MODULE my_register
+MODULE $my_register
 
   USE mod_gettext
 EOF
 
 for i in $*; do
-  echo "  USE my_register_lib$i" >> $filename1
+  echo "  USE ${my_register}_lib$i" >> $filename1
 done
 
 cat << EOF >> $filename1
@@ -60,7 +55,7 @@ cat << EOF >> $filename1
 EOF
 
 for i in $*; do
-  filename2=$srcdir/lib/$i/${filename}_lib$i.F90
+  filename2=$srcdir/lib/$i/${my_register}_lib$i.F90
   echo "    CALL register_lib_$i(PFAD)" >> $filename1
 done
 
@@ -74,7 +69,7 @@ END MODULE my_register
 EOF
 
 for i in $*; do
-  filename2=$srcdir/lib/$i/${filename}_lib$i.F90
+  filename2=$srcdir/lib/$i/${my_register}_lib$i.F90
 
 cat << EOF > $filename2
 ! erzeugt Mittwoch, 13. Mai 2026 09:41 (C) 2026 von Leander Jedamus
@@ -82,7 +77,7 @@ cat << EOF > $filename2
 
 #define DOMAIN "${domain}_lib$i"
        
-MODULE ${filename}_lib$i
+MODULE ${my_register}_lib$i
   USE mod_gettext
 
   IMPLICIT NONE
@@ -99,7 +94,7 @@ MODULE ${filename}_lib$i
     CALL bindtextdomain(DOMAIN, pfad)
   END SUBROUTINE register_lib_$i
 
-END MODULE ${filename}_lib$i
+END MODULE ${my_register}_lib$i
        
 ! vim:ai sw=4 expandtab
 
