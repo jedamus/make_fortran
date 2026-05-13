@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 
 # erzeugt Freitag, 16. Februar 2024 19:38 (C) 2024 von Leander Jedamus
+# modifiziert Dienstag, 12. Mai 2026 14:13 von Leander Jedamus
 # modifiziert Donnerstag, 07. Mai 2026 08:28 von Leander Jedamus
 # modifiziert Montag, 30. September 2024 23:26 von Leander Jedamus
 # modifiziert Dienstag, 10. September 2024 11:02 von Leander Jedamus
@@ -92,7 +93,9 @@ MODULE $PROJECT
   IMPLICIT NONE
   PRIVATE
 
-  PUBLIC :: $SUBROUTINE
+  PUBLIC :: $SUBROUTINE, my_project
+
+  CHARACTER(len=*), PARAMETER :: my_project = "$project"
 
   CONTAINS
 
