@@ -1,5 +1,5 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
-# modifiziert Mittwoch, 13. Mai 2026 15:40 von Leander Jedamus
+# modifiziert Mittwoch, 13. Mai 2026 17:58 von Leander Jedamus
 # modifiziert Dienstag, 12. Mai 2026 10:43 von Leander Jedamus
 # modifiziert Montag, 11. Mai 2026 15:56 von Leander Jedamus
 # modifiziert Sonntag, 10. Mai 2026 22:17 von Leander Jedamus
@@ -91,7 +91,7 @@ DATE			:= $(shell date +\"%y%m%d\")
 DATETIME		:= $(shell date +\"%d.%m.%Y\ %H:%M\")
 PROJECT			:= $(shell cat project.txt)
 # PROJECT		:= va_args
-PROJECT_F90		= $(SRCDIR)/project.f90
+PROJECT_F90		= $(SRCDIR)/project.F90
 PROJECT_FILES		= $(PROJECT_F90)
 
 PREFIX			:= /usr/local
