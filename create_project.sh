@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 
 # erzeugt Freitag, 16. Februar 2024 19:38 (C) 2024 von Leander Jedamus
+# modifiziert Mittwoch, 13. Mai 2026 17:09 von Leander Jedamus
 # modifiziert Dienstag, 12. Mai 2026 14:13 von Leander Jedamus
 # modifiziert Donnerstag, 07. Mai 2026 08:28 von Leander Jedamus
 # modifiziert Montag, 30. September 2024 23:26 von Leander Jedamus
@@ -29,7 +30,7 @@ else
   base_filename=$2
 fi
 
-PROJECT=$(basename $base_filename .f90)
+PROJECT=$(basename $base_filename .F90)
 SUBROUTINE="greet"
 
 project_filename="project.txt"
@@ -72,13 +73,13 @@ YEAR=$(date +"%Y")
 DATETIME=$(date +"%A, %d. %B %Y %H:%M")
 
 if [ ! -z "$maintainer" ]; then
-  MAINTAINER="WRITE(*,*) \"maintained by $maintainer <$maintainer_email>\""
+  MAINTAINER="WRITE(*,'(A,1X,A,1X,A)') _(\"maintained by\"), '$maintainer', '<'//'$maintainer_email'//'>'"
 else
   MAINTAINER=""
 fi
 
 if [ ! -z "$license" ]; then
-  LICENSE="WRITE(*,*) 'published under license \"$license\"'"
+  LICENSE="WRITE(*,'(A,1X,A)') _(\"published under license\"), '\"'//'$license'//'\"'"
 else
   LICENSE=""
 fi
@@ -89,6 +90,16 @@ cat <<EOF > $filename
 ! modifiziert $DATETIME von $author
 
 MODULE $PROJECT
+
+#define DOMAIN "$project"
+
+#ifdef IS_LIB
+#define _(msgid) dgettext (DOMAIN, msgid)
+#else
+#define _(msgid) gettext (msgid)
+#endif
+
+  USE mod_gettext
 
   IMPLICIT NONE
   PRIVATE
@@ -103,7 +114,9 @@ MODULE $PROJECT
 
     IMPLICIT NONE
 
-    WRITE(*,*) "$project: V$version (C) $years by $author <$author_email>"
+    WRITE(*,('(A,1x,A,1X,A,1X,A,1X,A,1X,A)')) &
+      "$project:", "V$version", "(C)", "$years", _("by"), "$author", &
+      "<"//"$author_email"//">"
     $MAINTAINER
     $LICENSE
 
