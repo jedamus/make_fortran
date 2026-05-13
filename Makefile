@@ -1,5 +1,6 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
-# modifiziert Dienstag, 12. Mai 2026 09:10 von Leander Jedamus
+# modifiziert Mittwoch, 13. Mai 2026 14:56 von Leander Jedamus
+# modifiziert Dienstag, 12. Mai 2026 10:43 von Leander Jedamus
 # modifiziert Montag, 11. Mai 2026 15:56 von Leander Jedamus
 # modifiziert Sonntag, 10. Mai 2026 22:17 von Leander Jedamus
 # modifiziert Donnerstag, 07. Mai 2026 16:46 von Leander Jedamus
@@ -70,6 +71,10 @@ VPATH			:= # search path for files not found in the current directory; separated
 #vpath			%.h ../headers
 
 .LIBPATTERNS		:= lib%.so lib%.a
+
+ifeq ($(PLATFORM),stable-armv7-unknown-linux-gnueabihf)
+PLATFORM		= linux
+endif
 
 PLATFORM		?= linux
 
@@ -192,6 +197,7 @@ CPPFLAGS		+= -pipe
 ifeq ($(machtype),MacOS)
   CPPFLAGS		+= -I/usr/local/Cellar/gettext/0.19.3/include
 endif
+CPPFLAGS		+= -I $(SRCDIR)
 
 CPPFLAGS		+= # -traditional
 CPPFLAGS		+= # -funroll-loops -fomit-frame-pointer
@@ -261,6 +267,8 @@ FILES			+= distclean.sh
 FILES			+= zip.sh
 FILES			+= create_project.sh
 FILES			+= create_version.sh
+FILES			+= create_register.sh
+FILES			+= create_translate.sh
 FILES			+= create_depend.py reorder.py separator.py
 FILES			+= install_bin.sh install_lib.sh install_locale.sh
 FILES			+= bin_dist.sh
@@ -338,7 +346,7 @@ ALL_SOURCES		= $(shell $(FIND) $(SRCDIR) -type f \( -name "*.f" -o -name "*.F" \
 			  -o -name "*.for" -o -name "*.FOR" -o -name "*.ftn" -o -name "*.FTN" \
 			  -o -name "*.FPP" -o -name "*.f77" -o -name "*.F77" -o -name "*.f90" \
 			  -o -name "*.F90" -o -name "*.f95" -o -name "*.F95" -o -name "*.f03" \
-			  -o -name "*.F03" -o -name "*.f08" -o -name "*.F08" -o -name "*.c" \) )
+			  -o -name "*.F03" -o -name "*.f08" -o -name "*.F08" \) )
 
 MAIN_SOURCES		= $(filter-out $(SRCLIB)/%,$(ALL_SOURCES))
 LIB_SOURCES		= $(filter $(SRCLIB)/%,$(ALL_SOURCES))
@@ -381,8 +389,9 @@ LIB_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.ol,$(filter %.f,$(LIB_SOUR
 			  $(patsubst $(SRCDIR)/%.f08,$(BUILDDIR)/%.ol,$(filter %.f08,$(LIB_SOURCES)))  \
 			  $(patsubst $(SRCDIR)/%.F08,$(BUILDDIR)/%.ol,$(filter %.F08,$(LIB_SOURCES)))  \
 			  $(patsubst $(SRCDIR)/%.c,$(BUILDDIR)/%.ol,$(filter %.c,$(LIB_SOURCES)))
-DEPENDS			= $(shell ./reorder.py $(BUILDDIR) $(LIB_OBJECTS) $(MAIN_OBJECTS))
+#DEPENDS			= $(shell ./reorder.py $(BUILDDIR) $(LIB_OBJECTS) $(MAIN_OBJECTS))
 #DEPENDS			= $(LIB_OBJECTS:.ol=.d) $(MAIN_OBJECTS:.o=.d)
+DEPENDS			= $(LIB_OBJECTS:.ol=.d) $(MAIN_OBJECTS:.o=.d)
 PRAE_T			= $(LIB_OBJECTS:.ol=.t) $(MAIN_OBJECTS:.o=.t)
 else
 LIB_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.osl,$(filter %.f,$(LIB_SOURCES))) \
@@ -402,13 +411,13 @@ LIB_OBJECTS		= $(patsubst $(SRCDIR)/%.f,$(BUILDDIR)/%.osl,$(filter %.f,$(LIB_SOU
 			  $(patsubst $(SRCDIR)/%.F03,$(BUILDDIR)/%.osl,$(filter %.F03,$(LIB_SOURCES)))  \
 			  $(patsubst $(SRCDIR)/%.f08,$(BUILDDIR)/%.osl,$(filter %.f08,$(LIB_SOURCES)))  \
 			  $(patsubst $(SRCDIR)/%.F08,$(BUILDDIR)/%.osl,$(filter %.F08,$(LIB_SOURCES))) 
-DEPENDS			= $(shell ./reorder.py $(BUILDDIR) $(LIB_OBJECTS) $(MAIN_OBJECTS))
+#DEPENDS			= $(shell ./reorder.py $(BUILDDIR) $(LIB_OBJECTS) $(MAIN_OBJECTS))
 #DEPENDS			= $(LIB_OBJECTS:.osl=.d) $(MAIN_OBJECTS:.o=.d)
+DEPENDS			= $(LIB_OBJECTS:.ol=.d) $(MAIN_OBJECTS:.o=.d)
 PRAE_T			= $(LIB_OBJECTS:.osl=.t) $(MAIN_OBJECTS:.o=.t)
 endif
 CSOURCES		= $(shell $(FIND) $(SRCDIR) -type f \( -name "*.c" \) ) 
 COBJECTS		= $(patsubst $(SRCDIR)/%.c,$(BUILDDIR)/%.o,$(filter %.c,$(CSOURCES))) 
-
 
 LIB_NAMES		= $(notdir $(wildcard $(SRCLIB)/*))
 ifeq ($(link_switch),static)
@@ -599,6 +608,14 @@ backup:
 .PHONY:			zip
 zip:
 			@./zip.sh $(BACKUPDIR) $(ZIPFILE) $(strip $(FILES))
+
+.PHONY:			create_translate
+create_translate:
+			@./create_translate.sh translate $(PROJECT) $(LIB_NAMES)
+
+.PHONY:			create_register
+create_register:
+			@./create_register.sh $(SRCDIR) $(PROJECT) $(WORKDIR)/locale $(LIB_NAMES)
 
 .PHONY:			translate
 translate:
