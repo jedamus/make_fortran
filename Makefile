@@ -1,4 +1,5 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
+# modifiziert Donnerstag, 02. Juli 2026 13:56 von Leander Jedamus
 # modifiziert Mittwoch, 13. Mai 2026 17:58 von Leander Jedamus
 # modifiziert Dienstag, 12. Mai 2026 10:43 von Leander Jedamus
 # modifiziert Montag, 11. Mai 2026 15:56 von Leander Jedamus
@@ -72,11 +73,11 @@ VPATH			:= # search path for files not found in the current directory; separated
 
 .LIBPATTERNS		:= lib%.so lib%.a
 
-ifeq ($(PLATFORM),stable-armv7-unknown-linux-gnueabihf)
-PLATFORM		= linux
+ifeq ($(TARGET),stable-armv7-unknown-linux-gnueabihf)
+TARGET		= linux
 endif
 
-PLATFORM		?= linux
+TARGET		?= linux
 
 debug_switch		:= true# false
 
@@ -133,7 +134,7 @@ NMFILE			:= nm.out.txt
 STRIP			:= strip
 
 SRCDIR			= src
-BUILDDIR		= build/$(PLATFORM)
+BUILDDIR		= build/$(TARGET)
 MODDIR			= $(BUILDDIR)/mod
 SRCLIB			= $(SRCDIR)/lib
 BUILDLIB		= $(BUILDDIR)/lib
@@ -319,13 +320,13 @@ UNAME_S			= $(shell uname -s)
 UNAME_M			= $(shell uname -m)
 
 ifeq ($(UNAME_S),Linux)
-  PLATFORM_DEFINES += -D__linux__ -D__gnu_linux__ -D__unix__
+  TARGET_DEFINES += -D__linux__ -D__gnu_linux__ -D__unix__
 else ifeq ($(UNAME_S),Darwin)
-  PLATFORM_DEFINES += -D__APPLE__ -D__MACH__
+  TARGET_DEFINES += -D__APPLE__ -D__MACH__
 else ifneq ($(findstr MINGW,$(UNAME_s)),)
-  PLATFORM_DEFINES += -D_WIN32
+  TARGET_DEFINES += -D_WIN32
 else ifneq ($(findstr CYGWIN,$(UNAME_S)),)
-  PLATFORM_DEFINES += -D_WIN32 -D__CYGWIN__
+  TARGET_DEFINES += -D_WIN32 -D__CYGWIN__
 endif
 
 ifeq ($(UNAME_M),x86_64)
@@ -336,7 +337,7 @@ else ifeq ($(UNAME_M),aarch64)
   ARCH_DEFINES		+= -D__aarch64__
 endif
 
-DEFINES			= $(PLATFORM_DEFINES) $(ARCH_DEFINES)
+DEFINES			= $(TARGET_DEFINES) $(ARCH_DEFINES)
 
 MODFLAG			= -J $(MODDIR)
 FINCLUDES		= -I $(BUILDDIR) -I $(SRCDIR) -I $(MODDIR) $(addprefix -I ,$(wildcard $(SRCLIB)/*))
@@ -611,7 +612,7 @@ zip:
 
 .PHONY:			create_translate
 create_translate:
-			@./create_translate.sh translate $(PROJECT) $(LIB_NAMES)
+			@./create_translate.sh translate $(PROJECT) $(SRCLIB) $(LIB_NAMES)
 
 .PHONY:			create_register
 create_register:
