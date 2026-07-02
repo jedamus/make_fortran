@@ -2,6 +2,8 @@
 # coding=utf-8 -*- python -*-
 
 # erzeugt Sonntag, 10. Mai 2026 20:48 (C) 2026 von Leander Jedamus
+# modifiziert Donnerstag, 02. Juli 2026 13:53 von Leander Jedamus
+# modifiziert Mittwoch, 13. Mai 2026 09:03 von Leander Jedamus
 # modifiziert Dienstag, 12. Mai 2026 06:36 von Leander Jedamus
 # modifiziert Montag, 11. Mai 2026 15:55 von Leander Jedamus
 # modifiziert Sonntag, 10. Mai 2026 22:16 von Leander Jedamus
@@ -161,10 +163,13 @@ def main():
     print(sep.trenner(faktor))
 
     # return ##+##
-
-  while (len(d) > 0):
+  
+  have_deleted = True
+  while ((len(d) > 0) and have_deleted):
+    have_deleted = False
     d5 = {}
     for key in d.keys():
+      is_deleted = False
       if debug:
         print('Key =', key)
       lst = d[key]
@@ -180,6 +185,14 @@ def main():
 
     for key in d5.keys():
       del d[key]
+      have_deleted = True
+
+  if not have_deleted:
+    for key in d.keys():
+      d_filnam = d2[key].rsplit('.',1)[-2] + '.d'
+      if debug:
+        print('Write key "', key, '" from "', d_filnam, '"', sep = '')
+      print(d_filnam, ' ', sep = '', end = '')
 
   print()
 
