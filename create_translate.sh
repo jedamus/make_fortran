@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # erzeugt Mittwoch, 13. Mai 2026 12:38 (C) 2026 von Leander Jedamus
-# modifiziert Freitag, 03. Juli 2026 08:39 von Leander Jedamus
+# modifiziert Freitag, 03. Juli 2026 09:26 von Leander Jedamus
 # modifiziert Donnerstag, 02. Juli 2026 14:14 von Leander Jedamus
 # modifiziert Mittwoch, 13. Mai 2026 14:16 von Leander Jedamus
 
@@ -53,10 +53,10 @@ DATETIME=$(date +"%A, %d. %B %Y %H:%M")
 
 names="-name '*.F' -o -name '*.FOR' -o -name '*.FTN' -o -name '*.FPP' -o -name '*.F77'"\
 " -o -name '*.F90' -o -name '*.F95' -o -name '*.F03' -o -name '*.F08'"
-# files=$(find src/ -maxdepth 2 -type f \( $names \))
+files=$(find src/ -maxdepth 2 -type f \( $names \))
 
-files=$(find src/ -maxdepth 2 -type f \( -name '*.F' -o -name '*.FOR' -o -name '*.FTN' -o -name '*.FPP' -o -name '*.F77'\
- -o -name '*.F90' -o -name '*.F95' -o -name '*.F03' -o -name '*.F08' \))
+files2=$(find src/ -maxdepth 2 -type f \( -name '*.F' -o -name '*.FOR' -o -name '*.FTN' -o -name '*.FPP' -o -name '*.F77'\
+  -o -name '*.F90' -o -name '*.F95' -o -name '*.F03' -o -name '*.F08' \))
 
 cat << EOF > ${translate}.sh
 #!/usr/bin/env sh
@@ -75,9 +75,9 @@ create $translate $project $files
 # translate.pl --file=src/main.F90 --project=$(cat project.txt) --version=$(cat version.txt)
 
 for lib in $libs; do
-  libfiles=$(find $srclib/$lib -type f \( -name "*.F" -o -name "*.FOR" -o -name "*.FTN" -o -name "*.FPP" \
+  libfiles=$(find $srclib/$lib -type f \( $names \) )
+  libfiles2=$(find $srclib/$lib -type f \( -name "*.F" -o -name "*.FOR" -o -name "*.FTN" -o -name "*.FPP" \
                -o -name "*.F77" -o -name "*.F90" -o -name "*.F95" -o -name "*.F03" -o -name "*.F08" \) )
-  # echo $libfiles
   create $translate ${project}_lib$lib $libfiles
 done
 
