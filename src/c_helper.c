@@ -1,6 +1,7 @@
 /* -*- C -*- */
 /* c_helper.c */
 /* erzeugt Donnerstag, 07. Mai 2026 16:42 (C) 2026 von Leander Jedamus */
+/* modifiziert Freitag, 03. Juli 2026 16:46 von Leander Jedamus */
 /* modifiziert Mittwoch, 13. Mai 2026 16:01 von Leander Jedamus */
 /* modifiziert Dienstag, 12. Mai 2026 14:35 von Leander Jedamus */
 /* modifiziert Donnerstag, 07. Mai 2026 16:45 von Leander Jedamus */
@@ -11,6 +12,7 @@
 #include <libintl.h>
 #include <locale.h>
 #include "c_helper.h"
+#include "getlocaledir.h"
 
 void fortran_bindtextdomain(const char *domain, const char *dir) {
   if (DEBUG) {
@@ -44,6 +46,16 @@ void fortran_gettext(const char *msgid, char *result, int max_len) {
 
   if (trans) {
     strncpy(result, trans, max_len - 1);
+    result[max_len - 1] = '\0';
+  } else {
+    result[0] = '\0';
+  }
+}
+
+void fortran_getlocaledir(const char *arg, char *result, int max_len) {
+  const char *pfad = getlocaledir(arg);
+  if (pfad) {
+    strncpy(result, pfad, max_len - 1);
     result[max_len - 1] = '\0';
   } else {
     result[0] = '\0';
