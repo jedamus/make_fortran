@@ -5,12 +5,7 @@
 MODULE project
 
 #define DOMAIN "make_fortran"
-
-#ifdef IS_LIB
-#define _(msgid) dgettext (DOMAIN, msgid)
-#else
-#define _(msgid) gettext (msgid)
-#endif
+#include "gettext.h"
 
   USE mod_gettext
 

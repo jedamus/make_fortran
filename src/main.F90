@@ -4,13 +4,8 @@
 ! modifiziert Samstag, 18. April 2026 09:17 von Leander Jedamus
 
 #define DOMAIN "make_fortran"
+#include "gettext.h"
 
-#ifdef IS_LIB
-#define _(msgid) dgettext (DOMAIN, msgid)
-#else
-#define _(msgid) gettext (msgid)
-#endif
-       
 PROGRAM main
 
   USE project

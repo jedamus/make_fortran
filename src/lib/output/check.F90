@@ -2,11 +2,7 @@
 ! modifiziert Dienstag, 12. Mai 2026 11:07 von Leander Jedamus
        
 #define DOMAIN "make_fortran_liboutput"
-#ifdef IS_LIB
-#define _(msgid) dgettext (DOMAIN, msgid)
-#else
-#define _(msgid) gettext (msgid)
-#endif
+#include "gettext.h"
        
 MODULE check
   USE mod_gettext
