@@ -15,6 +15,7 @@ PROGRAM main
   use mod_gettext
   use my_register
   USE check
+  USE my_check
 !  use test_me
 
   IMPLICIT NONE
@@ -26,6 +27,7 @@ PROGRAM main
   WRITE(*,*) _("Main program started")
 
   CALL my_check()
+  CALL check()
 
   CALL greet
   WRITE(*,*) ""
