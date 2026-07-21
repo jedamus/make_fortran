@@ -3,7 +3,6 @@
 ! modifiziert Donnerstag, 07. Mai 2026 06:50 von Leander Jedamus
 ! modifiziert Samstag, 18. April 2026 09:17 von Leander Jedamus
 
-#define DOMAIN "make_fortran"
 #include "gettext.h"
 
 PROGRAM main

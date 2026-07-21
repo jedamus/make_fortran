@@ -1,7 +1,7 @@
 ! erzeugt Dienstag, 12. Mai 2026 11:07 (C) 2026 von Leander Jedamus
 ! modifiziert Dienstag, 12. Mai 2026 11:07 von Leander Jedamus
        
-#define DOMAIN "make_fortran_liboutput"
+#define DOMAIN_SUFFIX "liboutput"
 #include "gettext.h"
        
 MODULE check
