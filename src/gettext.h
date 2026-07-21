@@ -1,19 +1,21 @@
 /* -*- C -*- */
 /* gettext.h */
 /* erzeugt Dienstag, 21. Juli 2026 11:04 (C) 2026 von Leander Jedamus */
-/* modifiziert Dienstag, 21. Juli 2026 12:36 von Leander Jedamus */
+/* modifiziert Dienstag, 21. Juli 2026 14:05 von Leander Jedamus */
 
 #ifndef GETTEXT_H
 #define GETTEXT_H 1
 
 #define DOMAIN_ "make_fortran"
 
+#ifdef __GFORTRAN__
+#  define __JOIN //
+#else
+#  define __JOIN
+#endif
+
 #ifdef DOMAIN_SUFFIX
-#  ifdef __GFORTRAN__
-#    define DOMAIN DOMAIN_ // "_" // DOMAIN_SUFFIX
-#  else
-#    define DOMAIN DOMAIN_ "_" DOMAIN_SUFFIX
-#  endif
+#  define DOMAIN DOMAIN_ __JOIN "_" __JOIN DOMAIN_SUFFIX
 #else
 #  define DOMAIN DOMAIN_
 #endif
