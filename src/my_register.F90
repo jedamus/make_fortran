@@ -27,6 +27,7 @@ MODULE my_register
 
     CALL setlocale()
 
+    argc = COMMAND_ARGUMENT_COUNT()
     argc = 0
     CALL GET_COMMAND_ARGUMENT(argc, length=length)
     ALLOCATE(CHARACTER(length) :: arg)
