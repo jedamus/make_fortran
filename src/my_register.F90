@@ -20,16 +20,17 @@ MODULE my_register
 
   SUBROUTINE register()
     IMPLICIT NONE
-    INTEGER :: i, length
+    INTEGER :: i, argc, length
     INTEGER, PARAMETER :: maxlen = 4096
     CHARACTER(LEN=:), ALLOCATABLE :: arg
     CHARACTER(len=:), ALLOCATABLE :: pfad
 
     CALL setlocale()
 
-    CALL GET_COMMAND_ARGUMENT(1, length=length)
+    argc = 0
+    CALL GET_COMMAND_ARGUMENT(argc, length=length)
     ALLOCATE(CHARACTER(length) :: arg)
-    CALL GET_COMMAND_ARGUMENT(1, VALUE=arg)
+    CALL GET_COMMAND_ARGUMENT(argc, VALUE=arg)
     pfad = getlocaledir(arg)
 
     CALL bindtextdomain(DOMAIN, pfad)
