@@ -4,7 +4,6 @@
 
 MODULE project
 
-#define DOMAIN "make_fortran"
 #include "gettext.h"
 
   USE mod_gettext
