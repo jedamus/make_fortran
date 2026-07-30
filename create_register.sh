@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 
 # erzeugt Mittwoch, 13. Mai 2026 11:19 (C) 2026 von Leander Jedamus
+# modifiziert Donnerstag, 30. Juli 2026 15:40 von Leander Jedamus
 # modifiziert Freitag, 03. Juli 2026 16:53 von Leander Jedamus
 # modifiziert Donnerstag, 02. Juli 2026 14:19 von Leander Jedamus
 # modifiziert Mittwoch, 13. Mai 2026 15:44 von Leander Jedamus
@@ -63,6 +64,8 @@ cat << EOF >> $filename1
 
     CALL setlocale()
 
+    argc = COMMAND_ARGUMENT_COUNT()
+    argc = 0
     CALL GET_COMMAND_ARGUMENT(1, length=length)
     ALLOCATE(CHARACTER(length) :: arg)
     CALL GET_COMMAND_ARGUMENT(1, VALUE=arg)
@@ -74,7 +77,6 @@ cat << EOF >> $filename1
 EOF
 
 for i in $libs; do
-  filename2=$srcdir/lib/$i/${my_register}_lib$i.F90
   echo "    CALL register_lib_$i(pfad)" >> $filename1
 done
 
