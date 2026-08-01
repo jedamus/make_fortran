@@ -1,4 +1,5 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
+# modifiziert Samstag, 01. August 2026 15:43 von Leander Jedamus
 # modifiziert Donnerstag, 02. Juli 2026 13:56 von Leander Jedamus
 # modifiziert Mittwoch, 13. Mai 2026 17:58 von Leander Jedamus
 # modifiziert Dienstag, 12. Mai 2026 10:43 von Leander Jedamus
@@ -616,7 +617,7 @@ create_translate:
 
 .PHONY:			create_register
 create_register:
-			@./create_register.sh $(SRCDIR) $(PROJECT) $(WORKDIR)/locale my_register $(LIB_NAMES)
+			@./create_register.sh $(SRCDIR) $(PROJECT) my_register $(LIB_NAMES)
 
 .PHONY:			translate
 translate:

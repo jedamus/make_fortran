@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # erzeugt Mittwoch, 13. Mai 2026 11:19 (C) 2026 von Leander Jedamus
-# modifiziert Samstag, 01. August 2026 12:22 von Leander Jedamus
+# modifiziert Samstag, 01. August 2026 15:43 von Leander Jedamus
 # modifiziert Donnerstag, 30. Juli 2026 15:47 von Leander Jedamus
 # modifiziert Freitag, 03. Juli 2026 16:53 von Leander Jedamus
 # modifiziert Donnerstag, 02. Juli 2026 14:19 von Leander Jedamus
@@ -10,7 +10,7 @@
 # set -x
 
 if [ -z $1 ]; then
-  echo "usage: $0 <SRCDIR> <domain> <pfad> <my_register> <libname1> <libname2> ..."
+  echo "usage: $0 <SRCDIR> <domain> <my_register> <libname1> <libname2> ..."
   exit 1
 fi
 
@@ -19,8 +19,6 @@ program=$(basename $0)
 srcdir=$1
 shift
 domain=$1
-shift
-pfad=$1
 shift
 my_register=$1
 shift
