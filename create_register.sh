@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # erzeugt Mittwoch, 13. Mai 2026 11:19 (C) 2026 von Leander Jedamus
-# modifiziert Dienstag, 04. August 2026 07:54 von Leander Jedamus
+# modifiziert Dienstag, 04. August 2026 07:58 von Leander Jedamus
 # modifiziert Samstag, 01. August 2026 15:43 von Leander Jedamus
 # modifiziert Donnerstag, 30. Juli 2026 15:47 von Leander Jedamus
 # modifiziert Freitag, 03. Juli 2026 16:53 von Leander Jedamus
@@ -42,7 +42,7 @@ cat << EOF > $filename1
 
 ! #define DOMAIN "$domain"
 
-#include "gettext.h"
+#include "$gettext_h"
        
 MODULE $my_register
 
@@ -97,7 +97,7 @@ END MODULE my_register
 EOF
 
 for lib in $libs; do
-  filename2=$srcdir/lib/$lib/${my_register}_lib$lib.F90
+  filename2=$srclib/$lib/${my_register}_lib$lib.F90
 
 cat << EOF > $filename2
 ! erzeugt Mittwoch, 13. Mai 2026 09:41 (C) 2026 von Leander Jedamus
@@ -108,7 +108,7 @@ cat << EOF > $filename2
 ! #define DOMAIN "${domain}_lib$lib"
 
 #define DOMAIN_SUFFIX "lib$lib"
-#include "gettext.h"
+#include "$gettext_h"
        
 MODULE ${my_register}_lib$lib
   USE mod_gettext
