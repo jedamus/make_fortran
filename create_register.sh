@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # erzeugt Mittwoch, 13. Mai 2026 11:19 (C) 2026 von Leander Jedamus
-# modifiziert Dienstag, 04. August 2026 08:36 von Leander Jedamus
+# modifiziert Dienstag, 04. August 2026 08:41 von Leander Jedamus
 # modifiziert Samstag, 01. August 2026 15:43 von Leander Jedamus
 # modifiziert Donnerstag, 30. Juli 2026 15:47 von Leander Jedamus
 # modifiziert Freitag, 03. Juli 2026 16:53 von Leander Jedamus
@@ -32,7 +32,7 @@ libs="$*"
 DATETIME=$(date +"%A, %d. %B %Y %H:%M")
 GETTEXT_H=$(echo $gettext_h | sed -e 's/\./_/g' | tr [:lower:] [:upper:])
 
-filename1="$srcdir/${my_register}.F90"
+filename1=$srcdir/${my_register}.F90
 
 echo "creating $filename1."
 cat << EOF > $filename1
