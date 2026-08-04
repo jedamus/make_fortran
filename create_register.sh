@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # erzeugt Mittwoch, 13. Mai 2026 11:19 (C) 2026 von Leander Jedamus
-# modifiziert Dienstag, 04. August 2026 08:04 von Leander Jedamus
+# modifiziert Dienstag, 04. August 2026 08:36 von Leander Jedamus
 # modifiziert Samstag, 01. August 2026 15:43 von Leander Jedamus
 # modifiziert Donnerstag, 30. Juli 2026 15:47 von Leander Jedamus
 # modifiziert Freitag, 03. Juli 2026 16:53 von Leander Jedamus
@@ -34,6 +34,7 @@ GETTEXT_H=$(echo $gettext_h | sed -e 's/\./_/g' | tr [:lower:] [:upper:])
 
 filename1="$srcdir/${my_register}.F90"
 
+echo "creating $filename1."
 cat << EOF > $filename1
 ! erzeugt Dienstag, 12. Mai 2026 11:12 (C) 2026 von Leander Jedamus
 ! modifiziert $DATETIME von Leander Jedamus
@@ -98,6 +99,7 @@ EOF
 
 for lib in $libs; do
   filename2=$srclib/$lib/${my_register}_lib$lib.F90
+  echo "creating $filename2."
 
 cat << EOF > $filename2
 ! erzeugt Mittwoch, 13. Mai 2026 09:41 (C) 2026 von Leander Jedamus
@@ -135,6 +137,7 @@ EOF
 done
 
 filename3=$srcdir/$gettext_h
+echo "creating $filename3."
 cat << EOF > $filename3
 /* -*- C -*- */
 /* $gettext_h */
