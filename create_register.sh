@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # erzeugt Mittwoch, 13. Mai 2026 11:19 (C) 2026 von Leander Jedamus
-# modifiziert Dienstag, 04. August 2026 07:58 von Leander Jedamus
+# modifiziert Dienstag, 04. August 2026 08:04 von Leander Jedamus
 # modifiziert Samstag, 01. August 2026 15:43 von Leander Jedamus
 # modifiziert Donnerstag, 30. Juli 2026 15:47 von Leander Jedamus
 # modifiziert Freitag, 03. Juli 2026 16:53 von Leander Jedamus
@@ -11,7 +11,7 @@
 # set -x
 
 if [ -z $1 ]; then
-  echo "usage: $0 <SRCDIR> <domain> <my_register> <libname1> <libname2> ..."
+  echo "usage: $0 <SRCDIR> <SRCLIB> <domain> <gettext.h> <my_register> <libname1> <libname2> ..."
   exit 1
 fi
 
