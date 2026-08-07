@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 
 # erzeugt Mittwoch, 13. Mai 2026 12:38 (C) 2026 von Leander Jedamus
+# modifiziert Freitag, 07. August 2026 12:46 von Leander Jedamus
 # modifiziert Freitag, 03. Juli 2026 11:15 von Leander Jedamus
 # modifiziert Donnerstag, 02. Juli 2026 14:14 von Leander Jedamus
 # modifiziert Mittwoch, 13. Mai 2026 14:16 von Leander Jedamus
@@ -22,6 +23,7 @@ create() {
   for file in $files; do
     grep "_(" $file > $tmpfile
     if [ -s $tmpfile ]; then
+      echo "analyzing $file"
       if [ $is_first = 1 ]; then
         echo -n "${translate}.pl " >> ${translate}.sh
 	is_first=0
@@ -69,7 +71,7 @@ cat << EOF > ${translate}.sh
 
 EOF
 
-create $translate $project $files
+create $translate $project $files2
 
 # translate.pl --file=src/main.F90 --project=$(cat project.txt) --version=$(cat version.txt)
 
@@ -77,7 +79,7 @@ for lib in $libs; do
   libfiles=$(find $srclib/$lib -type f \( $names \) )
   libfiles2=$(find $srclib/$lib -type f \( -name "*.F" -o -name "*.FOR" -o -name "*.FTN" -o -name "*.FPP" \
                -o -name "*.F77" -o -name "*.F90" -o -name "*.F95" -o -name "*.F03" -o -name "*.F08" \) )
-  create $translate ${project}_lib$lib $libfiles
+  create $translate ${project}_lib$lib $libfiles2
 done
 
 cat << EOF >> ${translate}.sh
