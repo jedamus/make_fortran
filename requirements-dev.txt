@@ -1,1 +1,2 @@
 fprettify==0.3.7
+poetry==2.4.1
