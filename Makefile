@@ -1,4 +1,5 @@
 # erzeugt Samstag, 04. Juli 2015 14:04 (C) 2015 von Leander Jedamus
+# modifiziert Samstag, 08. August 2026 07:05 von Leander Jedamus
 # modifiziert Dienstag, 04. August 2026 07:50 von Leander Jedamus
 # modifiziert Samstag, 01. August 2026 15:43 von Leander Jedamus
 # modifiziert Donnerstag, 02. Juli 2026 13:56 von Leander Jedamus
@@ -272,6 +273,7 @@ FILES			+= create_project.sh
 FILES			+= create_version.sh
 FILES			+= create_register.sh
 FILES			+= create_translate.sh
+FILES			+= convert.sh
 FILES			+= create_depend.py reorder.py separator.py
 FILES			+= install_bin.sh install_lib.sh install_locale.sh
 FILES			+= bin_dist.sh
