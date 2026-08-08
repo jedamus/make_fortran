@@ -1,0 +1,4 @@
+indent = 2
+strict-indent = True
+enable-replacements = True
+case = [2,1,2,2]

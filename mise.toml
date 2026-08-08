@@ -8,3 +8,4 @@ _.python.venv = ".venv"
 [tasks]
 setup = "uv pip install -r requirements.txt"
 setup-dev = "uv pip install -r requirements-dev.txt"
+pretty = "fprettify -c .fprettify.rc -r src/"
