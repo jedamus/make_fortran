@@ -6,7 +6,8 @@ This is a template program in FORTRAN written using Makefiles
 
 ```
 mise trust <path/to/make_fotran>/mise.toml
-msie install
+mise initial
+mise install
 mise setup-dev
 
 make
