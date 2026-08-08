@@ -1,0 +1,10 @@
+[tools]
+python = "3.13"
+"conda:gfortran" = "16.1.0"
+
+[env]
+_.python.venv = ".venv"
+
+[tasks]
+setup = "uv pip install -r requirements.txt"
+setup-dev = "uv pip install -r requirements-dev.txt"
